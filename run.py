@@ -2,12 +2,11 @@ import pygame
 from pygame.constants import QUIT
 
 import config
-from display.display_object_grid import Grid
-from display.display_object_interface import DisplayObjectInterface
+from display.grid import Grid
 
 
 class App:
-    objects: list[DisplayObjectInterface] = []
+    objects = []
 
     """Create a single-window app with multiple scenes."""
 
@@ -37,12 +36,12 @@ class App:
     def run(self):
         """Run the main event loop."""
         while self.running:
-            events = pygame.event.get()
-            for event in events:
+            for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
-            for o in self.objects:
-                o.dispatch_event(events)
+
+                for o in self.objects:
+                    o.event_handler(event)
             self.render()
         pygame.quit()
 
