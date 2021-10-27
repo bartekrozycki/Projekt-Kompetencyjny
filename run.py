@@ -2,13 +2,11 @@ import pygame
 from pygame.constants import QUIT
 
 import config
-from display.grid import Grid
+from UI.grid import Grid
 
 
 class App:
     event_handlers = []
-
-    """Create a single-window app with multiple scenes."""
 
     def __init__(self):
         """Initialize pygame and the application."""
@@ -22,6 +20,7 @@ class App:
         self.prev_mouse_pos = None
         self.test = [(0, 0), (2, 0), (5, 0)]
         self.grid_density = config.grid_density
+        self.clock = pygame.time.Clock()
 
         self.event_handlers.append(Grid(self, self.screen))
 
@@ -36,24 +35,26 @@ class App:
                                                           self.user_position[1] + pos[1] * self.grid_density + 1),
                                4 * self.zoom, 1)
 
-
         cursor_position = pygame.mouse.get_pos()
+        grid_position = [(cursor_position[0] - self.grid_density // 2 - self.user_position[0]) // self.grid_density,
+                         -(cursor_position[1] - self.grid_density // 2 - self.user_position[1]) // self.grid_density]
         cursor_position_text = self.console_font.render(' x: {:.0f} y: {:.0f}'.format(
-            (cursor_position[0] - self.user_position[0]) // self.grid_density,
-            -(cursor_position[1] - self.user_position[1]) // self.grid_density,
+            grid_position[0],
+            grid_position[1]
         ),
             False, (255, 255, 255))
         cursor_position_height = cursor_position_text.get_height()
         cursor_position_width = cursor_position_text.get_width() + 5
         pygame.draw.rect(self.screen, (0, 0, 0), (
-            0, config.display_height - cursor_position_height, cursor_position_width, cursor_position_height), 0)
+            0, config.display_height - cursor_position_height - 2, cursor_position_width, cursor_position_height + 2),
+                         0)
         self.screen.blit(cursor_position_text, (
             0, config.display_height - cursor_position_height, cursor_position_width, cursor_position_height))
         pygame.display.update()
 
     def run(self):
-        """Run the main event loop."""
         while self.running:
+            self.clock.tick(120)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False

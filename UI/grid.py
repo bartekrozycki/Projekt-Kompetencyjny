@@ -22,6 +22,7 @@ class Grid:
 
         dot_size = 2 if self.parent.grid_density > 20 else 1
 
+        # drawing grid dots
         while x < win_width:
             while y < win_height:
                 pygame.draw.rect(self.screen, (0, 0, 0), (x, y, dot_size, dot_size), 1)
@@ -43,27 +44,30 @@ class Grid:
 
     def mouse_button_down(self, event: Event):
         mouse_pos = pygame.mouse.get_pos()
-        factor = 1.125
+        zoom_factor = 1.125
 
+        # moving the grid
         def button_middle():
             self.parent.moving = True
 
+        # zoom in
         def button_wheel_up():
-            self.parent.zoom *= factor
-            self.parent.grid_density *= factor
+            self.parent.zoom *= zoom_factor
+            self.parent.grid_density *= zoom_factor
 
-            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (factor - 1)
-            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (factor - 1)
+            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (zoom_factor - 1)
+            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (zoom_factor - 1)
 
             self.parent.user_position[0] -= dx
             self.parent.user_position[1] -= dy
 
+        # zoom out
         def button_wheel_down():
-            self.parent.zoom /= factor
-            self.parent.grid_density /= factor
+            self.parent.zoom /= zoom_factor
+            self.parent.grid_density /= zoom_factor
 
-            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (1/factor - 1)
-            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (1/factor - 1)
+            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (1/zoom_factor - 1)
+            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (1/zoom_factor - 1)
 
             self.parent.user_position[0] -= dx
             self.parent.user_position[1] -= dy
@@ -77,6 +81,7 @@ class Grid:
         options[event.button]()
 
     def mouse_button_up(self, event: Event):
+        # moving the grid
         def button_middle():
             self.parent.moving = False
             self.prev_mouse_pos = None
@@ -87,6 +92,7 @@ class Grid:
         options[event.button]()
 
     def mouse_motion(self, event: Event):
+        # moving the grid
         if self.parent.moving:
             try:
                 mouse_pos = pygame.mouse.get_pos()
