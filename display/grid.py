@@ -42,16 +42,32 @@ class Grid:
             pass
 
     def mouse_button_down(self, event: Event):
+        mouse_pos = pygame.mouse.get_pos()
+        factor = 1.125
+
         def button_middle():
             self.parent.moving = True
 
         def button_wheel_up():
-            self.parent.zoom *= 1.125
-            self.parent.grid_density *= 1.125
+            self.parent.zoom *= factor
+            self.parent.grid_density *= factor
+
+            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (factor - 1)
+            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (factor - 1)
+
+            self.parent.user_position[0] -= dx
+            self.parent.user_position[1] -= dy
 
         def button_wheel_down():
-            self.parent.zoom /= 1.125
-            self.parent.grid_density /= 1.125
+            self.parent.zoom /= factor
+            self.parent.grid_density /= factor
+
+            dx = int(mouse_pos[0] - self.parent.user_position[0]) * (1/factor - 1)
+            dy = int(mouse_pos[1] - self.parent.user_position[1]) * (1/factor - 1)
+
+            self.parent.user_position[0] -= dx
+            self.parent.user_position[1] -= dy
+
 
         options = {
             pygame.BUTTON_MIDDLE: button_middle,
