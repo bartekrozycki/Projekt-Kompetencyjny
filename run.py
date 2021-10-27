@@ -6,7 +6,7 @@ from display.grid import Grid
 
 
 class App:
-    objects = []
+    event_handlers = []
 
     """Create a single-window app with multiple scenes."""
 
@@ -20,13 +20,13 @@ class App:
         self.prev_mouse_pos = None
         self.test = [(0, 0), (20, 0), (50, 0)]
 
-        self.objects.append(Grid(self, self.screen))
+        self.event_handlers.append(Grid(self, self.screen))
 
         self.running = True
 
     def render(self):
         self.screen.fill((255, 255, 255))  # White background
-        for o in self.objects:
+        for o in self.event_handlers:
             o.render()
         # for pos in self.test:
         #     pygame.draw.circle(self.screen, (255, 0, 0), (self.pos_x + pos[0] + 1, self.pos_y + pos[1] + 1),
@@ -39,9 +39,10 @@ class App:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
+                    break
 
-                for o in self.objects:
-                    o.event_handler(event)
+                for event_handler in self.event_handlers:
+                    event_handler.handle_event(event)
             self.render()
         pygame.quit()
 
