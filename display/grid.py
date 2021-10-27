@@ -5,7 +5,6 @@ import config
 
 
 class Grid:
-    grid_density = config.grid_density
 
     def __init__(self, parent, screen):
         self.parent = parent
@@ -13,22 +12,22 @@ class Grid:
         self.prev_mouse_pos = None
 
     def render(self):
-        if self.grid_density < 5:
+        if self.parent.grid_density < 5:
             return
         win_width, win_height = self.screen.get_size()
         pos_x, pos_y = self.parent.user_position
 
-        x = pos_x % self.grid_density
-        y = pos_y % self.grid_density
+        x = pos_x % self.parent.grid_density
+        y = pos_y % self.parent.grid_density
 
-        dot_size = 2 if self.grid_density > 20 else 1
+        dot_size = 2 if self.parent.grid_density > 20 else 1
 
         while x < win_width:
             while y < win_height:
                 pygame.draw.rect(self.screen, (0, 0, 0), (x, y, dot_size, dot_size), 1)
-                y += self.grid_density
-            y = pos_y % self.grid_density
-            x += self.grid_density
+                y += self.parent.grid_density
+            y = pos_y % self.parent.grid_density
+            x += self.parent.grid_density
 
     def handle_event(self, event: Event):
         options = {
@@ -48,11 +47,11 @@ class Grid:
 
         def button_wheel_up():
             self.parent.zoom *= 1.125
-            self.grid_density *= 1.125
+            self.parent.grid_density *= 1.125
 
         def button_wheel_down():
             self.parent.zoom /= 1.125
-            self.grid_density /= 1.125
+            self.parent.grid_density /= 1.125
 
         options = {
             pygame.BUTTON_MIDDLE: button_middle,
