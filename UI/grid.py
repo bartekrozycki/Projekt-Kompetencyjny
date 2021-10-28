@@ -135,3 +135,5 @@ class Grid:
 
     def video_resize(self, event: Event):
         self.generate_grid()
+        self.render()
+        pygame.display.update()
