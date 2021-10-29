@@ -28,6 +28,7 @@ class App:
 
     moving = False
     running = True
+    render_all = False
 
     info_bar_width = 0
 
@@ -42,14 +43,12 @@ class App:
 
         self.video_resize(None)
 
-    def render(self, everything=False):
-        # for event_handler in self.event_handlers:
-        #     event_handler.render()
-        # pygame.display.update()
-        if everything:
+    def render(self):
+        if self.render_all:
             for event_handler in self.event_handlers:
                 event_handler.render()
             pygame.display.update()
+            self.render_all = False
         else:
             pygame.display.update(self.dirty_rectangles)
             self.dirty_rectangles.clear()
@@ -82,9 +81,7 @@ class App:
             pass
 
     def video_resize(self, event):
-        for event_handler in self.event_handlers:
-            event_handler.render()
-        pygame.display.update()
+        self.render_all = True
 
     def mouse_motion(self, event):
         cursor_position = pygame.mouse.get_pos()

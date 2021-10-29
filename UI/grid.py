@@ -82,13 +82,13 @@ class Grid:
             self.parent.user_position[1] -= dy
 
             self.generate_grid()
-            self.parent.render(everything=True)
+            self.parent.render_all = True
 
         # zoom out
         def button_wheel_down():
             if not self.parent.grid_density >= config.min_grid_density:
                 self.generate_grid()
-                self.parent.render(everything=True)
+                self.parent.render_all = True
                 return
             self.parent.zoom /= zoom_factor
             self.parent.grid_density /= zoom_factor
@@ -102,7 +102,7 @@ class Grid:
             if not self.parent.grid_density > 2:
                 return
             self.generate_grid()
-            self.parent.render(everything=True)
+            self.parent.render_all = True
 
         options = {
             pygame.BUTTON_MIDDLE: button_middle,
@@ -131,8 +131,7 @@ class Grid:
                 self.parent.user_position[1] += mouse_pos[1] - self.prev_mouse_pos[1]
             finally:
                 self.prev_mouse_pos = pygame.mouse.get_pos()
-                self.parent.render(everything=True)
+                self.parent.render_all = True
 
     def video_resize(self, event: Event):
         self.generate_grid()
-        self.parent.render(everything=True)
