@@ -4,11 +4,11 @@ from pygame.surface import Surface
 
 import config
 
-
-class Grid:
+class Grid():
     surface = None
 
     def __init__(self, parent, screen: Surface):
+
         self.parent = parent
         self.screen = screen
         self.size = [0, 0]

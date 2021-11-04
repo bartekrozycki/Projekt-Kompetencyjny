@@ -2,44 +2,34 @@ import pygame
 from pygame.constants import QUIT
 
 import config
-from UI.grid import Grid
-from UI.coordintes import Coordinates
-from UI.fps_counter import FPSCounter
 from UI.zoom import Zoom
+from app import App
 
 
-class App:
+class Run:
     pygame.font.init()
     pygame.display.init()
 
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((config.display_width, config.display_height), config.display_flags)
 
-    user_position = config.map_default_pos
-    grid_density = config.start_grid_density
-
     every_frame_render = []
     event_handlers = []
     dirty_rectangles = []
 
-    zoom = 1
-    grid_position = [0, 0]
-    prev_mouse_pos = None
-
-    moving = False
     running = True
     render_all = False
-
-    info_bar_width = 0
 
     def set_info_bar_width(self, width):
         self.info_bar_width = width
 
     def __init__(self):
-        Grid(self, self.screen)
-        Coordinates(self, self.screen)
-        FPSCounter(self, self.screen)
-        Zoom(self, self.screen)
+        App(self.screen, self.every_frame_render.append, self.event_handlers.append, self.dirty_rectangles.append)
+
+        # self.add_renderer(Grid)
+        # self.add_renderer(Coordinates)
+        # self.add_renderer(FPSCounter)
+        Zoom()
 
         self.video_resize(None)
 
@@ -91,4 +81,4 @@ class App:
 
 
 if __name__ == '__main__':
-    App().run()
+    Run().run()
