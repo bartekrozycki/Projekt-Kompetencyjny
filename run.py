@@ -1,11 +1,13 @@
 import pygame
-from pygame.constants import QUIT
+from pygame.constants import *
 
 import config
 from UI.grid import Grid
-from UI.coordintes import Coordinates
-from UI.fps_counter import FPSCounter
-from UI.zoom import Zoom
+from UI.infoBar.coordintes import Coordinates
+from UI.infoBar.fps_counter import FPSCounter
+from UI.infoBar.zoom import Zoom
+from UI.drawingPanel.button_draw import DrawRoadButton
+from UI.draw_single_road import DrawSingleRoad
 
 
 class App:
@@ -19,7 +21,10 @@ class App:
     grid_density = config.start_grid_density
 
     every_frame_render = []
+
     event_handlers = []
+    renderables = []
+
     dirty_rectangles = []
 
     zoom = 1
@@ -30,23 +35,29 @@ class App:
     running = True
     render_all = False
 
+    drawing = False
+
     info_bar_width = 0
 
     def set_info_bar_width(self, width):
         self.info_bar_width = width
 
     def __init__(self):
-        Grid(self, self.screen)
-        Coordinates(self, self.screen)
+        self.grid = Grid(self, self.screen)
         FPSCounter(self, self.screen)
         Zoom(self, self.screen)
+        Coordinates(self, self.screen)
+
+        DrawSingleRoad(self, self.screen)
+
+        DrawRoadButton(self, self.screen)
 
         self.video_resize(None)
 
     def render(self):
         if self.render_all:
-            for event_handler in self.event_handlers:
-                event_handler.render()
+            for renderable in self.renderables:
+                renderable.render()
             pygame.display.update()
             self.render_all = False
         else:
@@ -71,23 +82,25 @@ class App:
 
     def handle_event(self, event):
         options = {
-            pygame.VIDEORESIZE: self.video_resize,
-            pygame.MOUSEMOTION: self.mouse_motion,
+            VIDEORESIZE: self.video_resize,
+            MOUSEMOTION: self.mouse_motion,
         }
 
         try:
             options[event.type](event)
-        except:
+        except Exception as e:
             pass
 
     def video_resize(self, event):
         self.render_all = True
 
     def mouse_motion(self, event):
-        cursor_position = pygame.mouse.get_pos()
-        self.grid_position = [
-            (cursor_position[0] - self.grid_density // 2 - self.user_position[0]) // self.grid_density,
-            -(cursor_position[1] - self.grid_density // 2 - self.user_position[1]) // self.grid_density]
+        if not self.moving:
+            cursor_position = pygame.mouse.get_pos()
+            prev_grid_position = self.grid_position
+            self.grid_position = [
+                (cursor_position[0] - self.grid_density // 2 - self.user_position[0]) // self.grid_density,
+                -(cursor_position[1] - self.grid_density // 2 - self.user_position[1]) // self.grid_density]
 
 
 if __name__ == '__main__':

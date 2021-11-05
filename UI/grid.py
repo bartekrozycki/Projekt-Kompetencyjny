@@ -16,6 +16,7 @@ class Grid:
         self.prev_mouse_pos = None
 
         self.parent.event_handlers.append(self)
+        self.parent.renderables.append(self)
 
     def generate_grid(self):
         self.size = [self.screen.get_width() + self.parent.grid_density,
@@ -45,6 +46,13 @@ class Grid:
         y = -(self.parent.grid_density - self.parent.user_position[1] % self.parent.grid_density)
 
         self.screen.blit(self.surface, (x, y, self.size[0], self.size[1]))
+
+    def dirty_render(self, rectangle: pygame.Rect):
+        x = (self.parent.grid_density - self.parent.user_position[0] % self.parent.grid_density)
+        y = (self.parent.grid_density - self.parent.user_position[1] % self.parent.grid_density)
+
+        self.screen.blit(self.surface, rectangle.move(x, y))
+        self.parent.dirty_rectangles.append(rectangle.move(x, y))
 
     def handle_event(self, event: Event):
         options = {

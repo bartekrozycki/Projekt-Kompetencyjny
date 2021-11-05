@@ -17,6 +17,7 @@ class Coordinates:
         self.surface = pygame.Surface(self.size)
 
         self.parent.event_handlers.append(self)
+        self.parent.renderables.append(self)
         self.offset = self.parent.info_bar_width
         self.parent.set_info_bar_width(self.parent.info_bar_width + self.size[0])
 
