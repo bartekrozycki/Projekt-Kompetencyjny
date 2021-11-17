@@ -1,41 +1,46 @@
 import pygame
 from pygame.event import Event
+from pygame.time import Clock
 
 import config
+from context import core, context
 
 
 class FPSCounter:
     surface = None
     offset = 0
 
-    def __init__(self, parent, screen: pygame.Surface):
+    def __init__(self, screen: pygame.Surface, clock: Clock):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
-        self.parent = parent
         self.screen = screen
+        self.clock = clock
+
         test_render = self.font_consolas.render(
-            '{}fps: {} '.format(' ' if self.parent.info_bar_width == 0 else '', config.max_fps), False, (255, 255, 255))
+            '{}fps: {} '.format(' ' if context.info_bar_width == 0 else '', config.max_fps), False, (255, 255, 255))
 
         self.size = (test_render.get_width(), test_render.get_height())
 
         self.surface = pygame.Surface(self.size)
 
-        self.parent.event_handlers.append(self)
-        self.parent.every_frame_render.append(self)
-        self.offset = self.parent.info_bar_width
-        self.parent.set_info_bar_width(self.parent.info_bar_width + self.size[0])
+        core.event_handlers.append(self)
+        core.every_frame_render.append(self)
+
+        self.offset = context.info_bar_width
+        context.info_bar_width = context.info_bar_width + self.size[0]
 
         self.render()
 
     def render(self):
         text_render = self.font_consolas.render(' fps: {:.0f} '.format(
-            self.parent.clock.get_fps(),
+            self.clock.get_fps(),
         ), False, (255, 255, 255))
 
         self.surface.fill((0, 0, 0))
         self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
         self.screen.blit(self.surface,
                          (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1]))
-        self.parent.dirty_rectangles.append(
+
+        core.dirty_rectangles.append(
             (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1]))
 
         return self.size

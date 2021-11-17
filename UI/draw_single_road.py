@@ -2,6 +2,7 @@ import pygame
 from pygame.event import Event
 from pygame.surface import Surface
 from UI.single_road import SingleRoad
+from context import core
 
 
 class DrawSingleRoad:
@@ -13,7 +14,7 @@ class DrawSingleRoad:
         self.parent = parent
         self.screen = screen
 
-        self.parent.event_handlers.append(self)
+        core.event_handlers.append(self)
 
     def dirty_render(self):
         self.parent.grid.dirty_render(self.rectangle)
