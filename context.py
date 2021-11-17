@@ -14,6 +14,7 @@ class Context():
 
     is_drawing = False
 
+context = Context()
 
 class Core():
     every_frame_render = []
@@ -24,5 +25,22 @@ class Core():
     render_all = True
 
 
-context = Context()
 core = Core()
+
+def Renderable(func):
+    def inner(self, *args, **kwargs):
+        core.renderables.append(self)
+        return func(self, *args, **kwargs)
+    return inner
+
+def RenderableEveryFrame(func):
+    def inner(self, *args, **kwargs):
+        core.every_frame_render.append(self)
+        return func(self, *args, **kwargs)
+    return inner
+
+def EventHandler(func):
+    def inner(self, *args, **kwargs):
+        core.event_handlers.append(self)
+        return func(self, *args, **kwargs)
+    return inner

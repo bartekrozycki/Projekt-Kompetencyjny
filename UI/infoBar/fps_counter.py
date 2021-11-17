@@ -3,13 +3,15 @@ from pygame.event import Event
 from pygame.time import Clock
 
 import config
-from context import core, context
+from context import core, context, EventHandler, RenderableEveryFrame
 
 
 class FPSCounter:
     surface = None
     offset = 0
 
+    @EventHandler
+    @RenderableEveryFrame
     def __init__(self, screen: pygame.Surface, clock: Clock):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
         self.screen = screen
@@ -21,9 +23,6 @@ class FPSCounter:
         self.size = (test_render.get_width(), test_render.get_height())
 
         self.surface = pygame.Surface(self.size)
-
-        core.event_handlers.append(self)
-        core.every_frame_render.append(self)
 
         self.offset = context.info_bar_width
         context.info_bar_width = context.info_bar_width + self.size[0]

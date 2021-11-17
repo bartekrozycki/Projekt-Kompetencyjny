@@ -3,20 +3,19 @@ from pygame.event import Event
 from pygame.surface import Surface
 
 import config
-from context import context, core
+from context import context, core, Renderable, EventHandler
 
 
 class Grid:
     surface = None
 
+    @Renderable
+    @EventHandler
     def __init__(self, screen: Surface):
         self.screen = screen
         self.size = [0, 0]
         self.generate_grid()
         self.prev_mouse_pos = None
-
-        core.event_handlers.append(self)
-        core.renderables.append(self)
 
     def generate_grid(self):
         self.size = [self.screen.get_width() + context.grid_density,
