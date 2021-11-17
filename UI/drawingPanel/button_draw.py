@@ -51,4 +51,5 @@ class DrawRoadButton:
                 else:
                     self.surface.fill((0, 0, 0))
 
+                self.parent.drawing = not self.parent.drawing
                 self.dirty_render()

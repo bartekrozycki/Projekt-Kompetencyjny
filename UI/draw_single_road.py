@@ -38,6 +38,8 @@ class DrawSingleRoad:
 
     def mouse_button_down(self, event: Event):
         def button_left():
+            # if not self.parent.drawing:
+            #     return
             self.start_point = self.parent.grid_position
             self.end_point = pygame.mouse.get_pos()
             self.dirty_render()
