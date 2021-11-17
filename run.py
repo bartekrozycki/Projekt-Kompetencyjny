@@ -29,11 +29,9 @@ class App:
         Zoom(self.screen)
         Coordinates(self.screen)
 
-        DrawSingleRoad(self, self.screen)
+        DrawSingleRoad(self, self.screen) #  FIXME bruh
 
         DrawRoadButton(self.screen)
-
-        self.video_resize(None)
 
     def render(self):
         for element in core.every_frame_render:
@@ -48,40 +46,18 @@ class App:
             core.dirty_rectangles.clear()
 
     def run(self):
-        core.event_handlers.append(self)
-
         while self.running:
             self.clock.tick(config.max_fps)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
                     break
-
+                elif event.type == VIDEORESIZE:
+                    core.render_all = True
                 for event_handler in core.event_handlers:
                     event_handler.handle_event(event)
             self.render()
         pygame.quit()
-
-    def handle_event(self, event):
-        options = {
-            VIDEORESIZE: self.video_resize,
-            MOUSEMOTION: self.mouse_motion,
-        }
-
-        try:
-            options[event.type](event)
-        except Exception as e:
-            pass
-
-    def video_resize(self, event):
-        core.render_all = True
-
-    def mouse_motion(self, event):
-        if not context.moving:
-            cursor_position = pygame.mouse.get_pos()
-            context.grid_position = [
-                (cursor_position[0] - context.grid_density // 2 - context.user_position[0]) // context.grid_density,
-                -(cursor_position[1] - context.grid_density // 2 - context.user_position[1]) // context.grid_density]
 
 
 if __name__ == '__main__':

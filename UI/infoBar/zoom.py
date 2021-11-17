@@ -31,7 +31,7 @@ class Zoom:
 
     def render(self):
         text_render = self.font_consolas.render(' zoom: {:.2f} '.format(
-            context.zoom,
+            context.zoom_sensitivity,
         ), False, (255, 255, 255))
 
         self.surface.fill((0, 0, 0))
@@ -62,11 +62,11 @@ class Zoom:
             print(type(e), e)
 
     def mouse_button_down(self, event: Event):
-        # zoom in
+        # zoom_sensitivity in
         def button_wheel_up():
             self.render()
 
-        # zoom out
+        # zoom_sensitivity out
         def button_wheel_down():
             self.render()
 

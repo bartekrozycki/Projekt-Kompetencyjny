@@ -17,7 +17,7 @@ class DrawSingleRoad:
         core.event_handlers.append(self)
 
     def dirty_render(self):
-        self.parent.grid.dirty_render(self.rectangle)
+        self.parent.grid.dirty_render(self.rectangle) # FIXME bruh
 
         a = (self.start_point[0] * self.parent.grid_density + self.parent.user_position[0],
              -self.start_point[1] * self.parent.grid_density + self.parent.user_position[1])
@@ -41,7 +41,7 @@ class DrawSingleRoad:
         def button_left():
             # if not self.parent.drawing:
             #     return
-            self.start_point = self.parent.grid_position
+            self.start_point = self.parent.mouse_coordinates
             self.end_point = pygame.mouse.get_pos()
             self.dirty_render()
 
@@ -52,7 +52,7 @@ class DrawSingleRoad:
 
     def mouse_button_up(self, event: Event):
         def button_left():
-            SingleRoad(self.parent, self.screen, self.start_point, self.parent.grid_position)
+            SingleRoad(self.parent, self.screen, self.start_point, self.parent.mouse_coordinates)
             self.start_point = None
             self.end_point = None
 

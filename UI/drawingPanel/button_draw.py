@@ -52,5 +52,5 @@ class DrawRoadButton:
                 else:
                     self.surface.fill((0, 0, 0))
 
-                context.isDrawing = not context.isDrawing
+                context.is_drawing = not context.is_drawing
                 self.dirty_render()

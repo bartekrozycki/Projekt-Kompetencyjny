@@ -71,16 +71,16 @@ class Grid:
         mouse_pos = pygame.mouse.get_pos()
         zoom_factor = 1.125
 
-        # moving the grid
+        # is_moving the grid
         def button_middle():
-            context.moving = True
+            context.is_moving = True
 
-        # zoom in
+        # zoom_sensitivity in
         def button_wheel_up():
             if not context.grid_density <= config.max_grid_density:
                 return
 
-            context.zoom *= zoom_factor
+            context.zoom_sensitivity *= zoom_factor
             context.grid_density *= zoom_factor
 
             dx = int(mouse_pos[0] - context.user_position[0]) * (zoom_factor - 1)
@@ -92,13 +92,13 @@ class Grid:
             self.generate_grid()
             core.render_all = True
 
-        # zoom out
+        # zoom_sensitivity out
         def button_wheel_down():
             if not context.grid_density >= config.min_grid_density:
                 self.generate_grid()
                 core.render_all = True
                 return
-            context.zoom /= zoom_factor
+            context.zoom_sensitivity /= zoom_factor
             context.grid_density /= zoom_factor
 
             dx = int(mouse_pos[0] - context.user_position[0]) * (1 / zoom_factor - 1)
@@ -120,9 +120,9 @@ class Grid:
         options[event.button]()
 
     def mouse_button_up(self, event: Event):
-        # moving the grid
+        # is_moving the grid
         def button_middle():
-            context.moving = False
+            context.is_moving = False
             self.prev_mouse_pos = None
 
         options = {
@@ -131,8 +131,8 @@ class Grid:
         options[event.button]()
 
     def mouse_motion(self, event: Event):
-        # moving the grid
-        if context.moving:
+        # is_moving the grid
+        if context.is_moving:
             try:
                 mouse_pos = pygame.mouse.get_pos()
                 context.user_position[0] += mouse_pos[0] - self.prev_mouse_pos[0]
