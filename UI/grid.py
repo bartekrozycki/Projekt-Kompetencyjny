@@ -2,15 +2,15 @@ import pygame
 from pygame.event import Event
 from pygame.surface import Surface
 
-import config
-from context import context, core, Renderable, EventHandler
+from resources import config
+from resources.context import context, core, renderable, event_handler
 
 
 class Grid:
     surface = None
 
-    @Renderable
-    @EventHandler
+    @renderable
+    @event_handler
     def __init__(self, screen: Surface):
         self.screen = screen
         self.size = [0, 0]

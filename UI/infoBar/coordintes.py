@@ -1,14 +1,14 @@
 import pygame
 from pygame.event import Event
 
-from context import core, context, EventHandler, Renderable
+from resources.context import core, context, event_handler, renderable
 
 
 class Coordinates:
     surface = None
 
-    @EventHandler
-    @Renderable
+    @event_handler
+    @renderable
     def __init__(self, screen: pygame.Surface):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
         self.screen = screen
@@ -20,7 +20,7 @@ class Coordinates:
         self.surface = pygame.Surface(self.size)
 
         self.offset = context.info_bar_width
-        context.info_bar_width = context.info_bar_width + self.size[0]
+        context.info_bar_width += self.size[0]
 
         self.render()
 

@@ -1,7 +1,7 @@
 import pygame
 from pygame.event import Event
 
-from context import core, context
+from resources.context import core, context
 
 
 class DrawRoadButton:

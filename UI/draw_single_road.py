@@ -2,7 +2,7 @@ import pygame
 from pygame.event import Event
 from pygame.surface import Surface
 from UI.single_road import SingleRoad
-from context import core, EventHandler
+from resources.context import event_handler
 
 
 class DrawSingleRoad:
@@ -10,7 +10,7 @@ class DrawSingleRoad:
     end_point = None
     rectangle = pygame.Rect(0, 0, 0, 0)
 
-    @EventHandler
+    @event_handler
     def __init__(self, parent, screen: Surface):
         self.parent = parent
         self.screen = screen

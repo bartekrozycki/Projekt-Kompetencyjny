@@ -2,16 +2,16 @@ import pygame
 from pygame.event import Event
 from pygame.time import Clock
 
-import config
-from context import core, context, EventHandler, RenderableEveryFrame
+from resources import config
+from resources.context import core, context, event_handler, renderable_every_frame
 
 
 class FPSCounter:
     surface = None
     offset = 0
 
-    @EventHandler
-    @RenderableEveryFrame
+    @event_handler
+    @renderable_every_frame
     def __init__(self, screen: pygame.Surface, clock: Clock):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
         self.screen = screen

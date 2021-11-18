@@ -1,16 +1,16 @@
 import pygame
 from pygame.event import Event
 
-import config
-from context import context, core, Renderable, EventHandler
+from resources import config
+from resources.context import context, core, renderable, event_handler
 
 
 class Zoom:
     surface = None
     offset = 0
 
-    @Renderable
-    @EventHandler
+    @renderable
+    @event_handler
     def __init__(self, screen: pygame.Surface):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
         self.screen = screen
