@@ -1,8 +1,8 @@
 import pygame
 from pygame.event import Event
 
-from resources import config
-from resources.context import context, core, renderable, event_handler
+import settings
+from resources import context, core, renderable, event_handler
 
 
 class Zoom:
@@ -11,13 +11,12 @@ class Zoom:
 
     @renderable
     @event_handler
-    def __init__(self, screen: pygame.Surface):
+    def __init__(self):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
-        self.screen = screen
 
         test_render = self.font_consolas.render(
             '{}zoom: {:.02f}  '.format(' ' if context.info_bar_width == 0 else '',
-                                       config.max_grid_density / config.start_grid_density), False, (255, 255, 255))
+                                       settings.max_grid_density / settings.start_grid_density), False, (255, 255, 255))
 
         self.size = (test_render.get_width(), test_render.get_height())
 
@@ -35,12 +34,12 @@ class Zoom:
 
         self.surface.fill((0, 0, 0))
         self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
-        self.screen.blit(self.surface, (
-            self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1]
+        core.screen.blit(self.surface, (
+            self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1]
         ))
 
         core.dirty_rectangles.append(
-            (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1])
+            (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
         )
 
         return self.size

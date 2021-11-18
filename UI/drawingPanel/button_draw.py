@@ -1,7 +1,7 @@
 import pygame
 from pygame.event import Event
 
-from resources.context import core, context
+from resources import core, context
 
 
 class DrawRoadButton:
@@ -9,11 +9,9 @@ class DrawRoadButton:
     rectangle = None
     active = False
 
-    def __init__(self, screen: pygame.Surface):
-        self.screen = screen
-
+    def __init__(self):
         self.size = (15, 15)
-        self.rectangle = pygame.Rect(screen.get_width() - 10 - self.size[0], 10, self.size[0], self.size[1])
+        self.rectangle = pygame.Rect(core.screen.get_width() - 10 - self.size[0], 10, self.size[0], self.size[1])
         self.surface = pygame.Surface(self.size)
         self.surface.fill((0, 0, 0))
 
@@ -34,14 +32,14 @@ class DrawRoadButton:
             print(type(e), e)
 
     def render(self):
-        self.screen.blit(self.surface, self.rectangle)
+        core.screen.blit(self.surface, self.rectangle)
 
     def dirty_render(self):
-        self.screen.blit(self.surface, self.rectangle)
+        core.screen.blit(self.surface, self.rectangle)
         core.dirty_rectangles.append(self.rectangle)
 
     def video_resize(self, event):
-        self.rectangle = pygame.Rect(self.screen.get_width() - 10 - self.size[0], 10, self.size[0], self.size[1])
+        self.rectangle = pygame.Rect(core.screen.get_width() - 10 - self.size[0], 10, self.size[0], self.size[1])
 
     def mouse_button_down(self, event: Event):
         if event.button == pygame.BUTTON_LEFT:

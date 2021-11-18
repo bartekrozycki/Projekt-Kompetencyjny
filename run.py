@@ -1,16 +1,16 @@
 import pygame
 from pygame.constants import *
 
-from resources import config
-from resources.context import core
-
+import settings
+from resources import core
 
 if __name__ == '__main__':
     pygame.font.init()
     pygame.display.init()
 
-    clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((config.display_width, config.display_height), config.display_flags)
+    core.clock = pygame.time.Clock()
+    core.screen = pygame.display.set_mode((settings.display_width, settings.display_height), settings.display_flags)
+
 
     def render():
         for element in core.every_frame_render:
@@ -24,9 +24,10 @@ if __name__ == '__main__':
             pygame.display.update(core.dirty_rectangles)
             core.dirty_rectangles.clear()
 
+
     running = True
     while running:
-        clock.tick(config.max_fps)
+        core.clock.tick(settings.max_fps)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False

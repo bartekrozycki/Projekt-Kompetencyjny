@@ -1,4 +1,4 @@
-import config
+import settings
 
 
 class Context:
@@ -9,7 +9,7 @@ class Context:
 
     info_bar_width = 0
 
-    grid_density = config.start_grid_density
-    user_position = config.map_default_pos
+    grid_density = settings.start_grid_density
+    user_position = settings.map_default_pos
 
     is_drawing = False

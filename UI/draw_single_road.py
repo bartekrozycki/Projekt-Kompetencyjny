@@ -1,8 +1,7 @@
 import pygame
 from pygame.event import Event
-from pygame.surface import Surface
 from UI.single_road import SingleRoad
-from resources.context import event_handler
+from resources import components, context, core
 
 
 class DrawSingleRoad:
@@ -10,19 +9,19 @@ class DrawSingleRoad:
     end_point = None
     rectangle = pygame.Rect(0, 0, 0, 0)
 
-    @event_handler
-    def __init__(self, parent, screen: Surface):
-        self.parent = parent
-        self.screen = screen
+    def __init__(self):
+        core.event_handlers.append(self)
+        pass
 
     def dirty_render(self):
-        self.parent.grid.dirty_render(self.rectangle) # FIXME bruh
+        components.grid.dirty_render(self.rectangle) # FIXME bruh
 
-        a = (self.start_point[0] * self.parent.grid_density + self.parent.user_position[0],
-             -self.start_point[1] * self.parent.grid_density + self.parent.user_position[1])
+        a = (self.start_point[0] * context.grid_density + context.user_position[0],
+             -self.start_point[1] * context.grid_density + context.user_position[1])
         b = self.end_point
-        self.rectangle = pygame.draw.line(self.screen, (0, 0, 0), a, b)
-        self.parent.dirty_rectangles.append(self.rectangle)
+
+        self.rectangle = pygame.draw.line(core.screen, (0, 0, 0), a, b)
+        core.dirty_rectangles.append(self.rectangle)
 
     def handle_event(self, event: Event):
         options = {
@@ -40,7 +39,7 @@ class DrawSingleRoad:
         def button_left():
             # if not self.parent.drawing:
             #     return
-            self.start_point = self.parent.mouse_coordinates
+            self.start_point = context.mouse_coordinates
             self.end_point = pygame.mouse.get_pos()
             self.dirty_render()
 
@@ -51,7 +50,7 @@ class DrawSingleRoad:
 
     def mouse_button_up(self, event: Event):
         def button_left():
-            SingleRoad(self.parent, self.screen, self.start_point, self.parent.mouse_coordinates)
+            SingleRoad(self.start_point, context.mouse_coordinates)
             self.start_point = None
             self.end_point = None
 

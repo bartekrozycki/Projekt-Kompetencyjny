@@ -1,9 +1,8 @@
 import pygame
 from pygame.event import Event
-from pygame.surface import Surface
 
-from resources import config
-from resources.context import context, core, renderable, event_handler
+import settings
+from resources import renderable, event_handler, context, core
 
 
 class Grid:
@@ -11,21 +10,20 @@ class Grid:
 
     @renderable
     @event_handler
-    def __init__(self, screen: Surface):
-        self.screen = screen
+    def __init__(self):
         self.size = [0, 0]
         self.generate_grid()
         self.prev_mouse_pos = None
 
     def generate_grid(self):
-        self.size = [self.screen.get_width() + context.grid_density,
-                     self.screen.get_height() + context.grid_density]
+        self.size = [core.screen.get_width() + context.grid_density,
+                     core.screen.get_height() + context.grid_density]
 
         self.surface = pygame.Surface(self.size)
 
         self.surface.fill((135, 206, 250))
 
-        if context.grid_density <= config.min_grid_density:
+        if context.grid_density <= settings.min_grid_density:
             return
 
         x = 0
@@ -33,24 +31,27 @@ class Grid:
         dot_size = 2 if context.grid_density > 20 else 1
 
         # drawing grid dots
-        while x <= self.screen.get_width() + context.grid_density:
-            while y <= self.screen.get_height() + context.grid_density:
+        while x <= core.screen.get_width() + context.grid_density:
+            while y <= core.screen.get_height() + context.grid_density:
                 pygame.draw.rect(self.surface, (0, 0, 0), (x, y, dot_size, dot_size), 1)
                 y += context.grid_density
             y = 0
             x += context.grid_density
 
+
+
+
     def render(self):
         x = -(context.grid_density - context.user_position[0] % context.grid_density)
         y = -(context.grid_density - context.user_position[1] % context.grid_density)
 
-        self.screen.blit(self.surface, (x, y, self.size[0], self.size[1]))
+        core.screen.blit(self.surface, (x, y, self.size[0], self.size[1]))
 
     def dirty_render(self, rectangle: pygame.Rect):
         x = (context.grid_density - context.user_position[0] % context.grid_density)
         y = (context.grid_density - context.user_position[1] % context.grid_density)
 
-        self.screen.blit(self.surface, rectangle.move(x, y))
+        core.screen.blit(self.surface, rectangle.move(x, y))
         core.dirty_rectangles.append(rectangle.move(x, y))
 
     def handle_event(self, event: Event):
@@ -76,7 +77,7 @@ class Grid:
 
         # zoom_sensitivity in
         def button_wheel_up():
-            if not context.grid_density <= config.max_grid_density:
+            if not context.grid_density <= settings.max_grid_density:
                 return
 
             context.zoom_sensitivity *= zoom_factor
@@ -93,7 +94,7 @@ class Grid:
 
         # zoom_sensitivity out
         def button_wheel_down():
-            if not context.grid_density >= config.min_grid_density:
+            if not context.grid_density >= settings.min_grid_density:
                 self.generate_grid()
                 core.render_all = True
                 return

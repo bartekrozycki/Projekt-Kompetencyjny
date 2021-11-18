@@ -1,10 +1,10 @@
-from components import Components
-from context import Context
+from resources.components import Components
+from resources.context import Context
+from resources.core import Core
 
-context = Context()
 core = Core()
+context = Context()
 components = Components()
-
 
 def renderable(func):
     def inner(self, *args, **kwargs):

@@ -7,12 +7,12 @@ from UI.infoBar.zoom import Zoom
 
 
 class Components:
-    def _init_(self):
-        self.grid = Grid(self.screen)
-        self.fps_display = FPSCounter(self.screen, self.clock)
-        self.zoom_display = Zoom(self.screen)
-        self.xy_display = Coordinates(self.screen)
+    def __init__(self):
+        self.grid = Grid()
+        self.fps_display = FPSCounter()
+        self.zoom_display = Zoom()
+        self.xy_display = Coordinates()
 
-        DrawSingleRoad(self, self.screen)  # FIXME bruh
+        DrawSingleRoad(self)  # FIXME bruh
 
-        DrawRoadButton(self.screen)
+        DrawRoadButton()

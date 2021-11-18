@@ -1,9 +1,8 @@
 import pygame
 from pygame.event import Event
-from pygame.time import Clock
 
-from resources import config
-from resources.context import core, context, event_handler, renderable_every_frame
+import settings
+from resources import core, context, event_handler, renderable_every_frame
 
 
 class FPSCounter:
@@ -12,13 +11,11 @@ class FPSCounter:
 
     @event_handler
     @renderable_every_frame
-    def __init__(self, screen: pygame.Surface, clock: Clock):
+    def __init__(self):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
-        self.screen = screen
-        self.clock = clock
 
         test_render = self.font_consolas.render(
-            '{}fps: {} '.format(' ' if context.info_bar_width == 0 else '', config.max_fps), False, (255, 255, 255))
+            '{}fps: {} '.format(' ' if context.info_bar_width == 0 else '', settings.max_fps), False, (255, 255, 255))
 
         self.size = (test_render.get_width(), test_render.get_height())
 
@@ -31,16 +28,16 @@ class FPSCounter:
 
     def render(self):
         text_render = self.font_consolas.render(' fps: {:.0f} '.format(
-            self.clock.get_fps(),
+            core.clock.get_fps(),
         ), False, (255, 255, 255))
 
         self.surface.fill((0, 0, 0))
         self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
-        self.screen.blit(self.surface,
-                         (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1]))
+        core.screen.blit(self.surface,
+                         (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1]))
 
         core.dirty_rectangles.append(
-            (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1]))
+            (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1]))
 
         return self.size
 

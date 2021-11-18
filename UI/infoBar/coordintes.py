@@ -1,7 +1,7 @@
 import pygame
 from pygame.event import Event
 
-from resources.context import core, context, event_handler, renderable
+from resources import core, context, event_handler, renderable
 
 
 class Coordinates:
@@ -9,9 +9,8 @@ class Coordinates:
 
     @event_handler
     @renderable
-    def __init__(self, screen: pygame.Surface):
+    def __init__(self):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
-        self.screen = screen
         test_render = self.font_consolas.render(
             '{}x: -1234 y: -1234 '.format(' ' if context.info_bar_width == 0 else ''), False, (255, 255, 255))
 
@@ -54,10 +53,10 @@ class Coordinates:
 
         self.surface.fill((0, 0, 0))
         self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
-        self.screen.blit(self.surface,
-                         (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1])
+        core.screen.blit(self.surface,
+                         (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
                          )
 
         core.dirty_rectangles.append(
-            (self.offset, self.screen.get_height() - self.size[1], self.size[0], self.size[1])
+            (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
         )
