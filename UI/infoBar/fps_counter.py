@@ -2,15 +2,15 @@ import pygame
 from pygame.event import Event
 
 import settings
-from resources import core, context, event_handler, renderable_every_frame
+from resources import core, context, event_handler, renderable_every_frame, renderable
 
 
 class FPSCounter:
     surface = None
     offset = 0
 
-    @event_handler
     @renderable_every_frame
+    @renderable
     def __init__(self):
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
 
@@ -38,19 +38,3 @@ class FPSCounter:
 
         core.dirty_rectangles.append(
             (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1]))
-
-        return self.size
-
-    def set_offset(self, offset):
-        self.offset = offset
-
-    def handle_event(self, event: Event):
-        options = {
-        }
-
-        try:
-            options[event.type](event)
-        except KeyError:
-            pass
-        except Exception as e:
-            print(type(e), e)

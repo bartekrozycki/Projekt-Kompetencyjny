@@ -1,61 +1,43 @@
+from typing import Callable
+
 import pygame
 from pygame.event import Event
 
 import settings
-from resources import renderable, event_handler, context, core
+from foreground import Foreground
+from resources import event_handler, context, core
 
 
 class Grid:
-    surface = None
+    surface: pygame.Surface
+    rect: pygame.Rect
 
-    @renderable
+    prev_mouse_pos = None
+
     @event_handler
     def __init__(self):
-        self.size = [0, 0]
         self.generate_grid()
-        self.prev_mouse_pos = None
+        core.foreground = Foreground(core.screen, context)
+        core.foreground.update_background(self.surface)
+        core.foreground.render()
 
     def generate_grid(self):
-        self.size = [core.screen.get_width() + context.grid_density,
-                     core.screen.get_height() + context.grid_density]
+        self.surface = pygame.Surface(core.screen.get_rect().inflate((context.grid_density, context.grid_density)).size)
 
-        self.surface = pygame.Surface(self.size)
-
-        self.surface.fill((135, 206, 250))
+        self.surface.fill(settings.sky_blue)
 
         if context.grid_density <= settings.min_grid_density:
             return
 
-        x = 0
-        y = 0
         dot_size = 2 if context.grid_density > 20 else 1
 
         # drawing grid dots
-        while x <= core.screen.get_width() + context.grid_density:
-            while y <= core.screen.get_height() + context.grid_density:
-                pygame.draw.rect(self.surface, (0, 0, 0), (x, y, dot_size, dot_size), 1)
-                y += context.grid_density
-            y = 0
-            x += context.grid_density
-
-
-
-
-    def render(self):
-        x = -(context.grid_density - context.user_position[0] % context.grid_density)
-        y = -(context.grid_density - context.user_position[1] % context.grid_density)
-
-        core.screen.blit(self.surface, (x, y, self.size[0], self.size[1]))
-
-    def dirty_render(self, rectangle: pygame.Rect):
-        x = (context.grid_density - context.user_position[0] % context.grid_density)
-        y = (context.grid_density - context.user_position[1] % context.grid_density)
-
-        core.screen.blit(self.surface, rectangle.move(x, y))
-        core.dirty_rectangles.append(rectangle.move(x, y))
+        for x in range(int(core.screen.get_width() // context.grid_density) + 2):
+            for y in range(int(core.screen.get_height() // context.grid_density) + 2):
+                pygame.draw.rect(self.surface, (0, 0, 0), (x * context.grid_density, y * context.grid_density, dot_size, dot_size), 1)
 
     def handle_event(self, event: Event):
-        options = {
+        options: dict[int, Callable[[Event], None]] = {
             pygame.MOUSEBUTTONDOWN: self.mouse_button_down,
             pygame.MOUSEBUTTONUP: self.mouse_button_up,
             pygame.MOUSEMOTION: self.mouse_motion,
@@ -64,7 +46,7 @@ class Grid:
 
         try:
             options[event.type](event)
-        except:
+        except KeyError:
             pass
 
     def mouse_button_down(self, event: Event):
@@ -83,14 +65,21 @@ class Grid:
             context.zoom_sensitivity *= zoom_factor
             context.grid_density *= zoom_factor
 
-            dx = int(mouse_pos[0] - context.user_position[0]) * (zoom_factor - 1)
-            dy = int(mouse_pos[1] - context.user_position[1]) * (zoom_factor - 1)
+            x = core.foreground.rect.x
+            y = core.foreground.rect.y
 
+            dx = int(mouse_pos[0] - x) * (zoom_factor - 1)
+            dy = int(mouse_pos[1] - y) * (zoom_factor - 1)
+
+            core.foreground.move((-dx, -dy))
             context.user_position[0] -= dx
             context.user_position[1] -= dy
 
             self.generate_grid()
             core.render_all = True
+
+            core.foreground.update_background(self.surface)
+            core.foreground.render()
 
         # zoom_sensitivity out
         def button_wheel_down():
@@ -101,9 +90,13 @@ class Grid:
             context.zoom_sensitivity /= zoom_factor
             context.grid_density /= zoom_factor
 
-            dx = int(mouse_pos[0] - context.user_position[0]) * (1 / zoom_factor - 1)
-            dy = int(mouse_pos[1] - context.user_position[1]) * (1 / zoom_factor - 1)
+            x = core.foreground.rect.x
+            y = core.foreground.rect.y
 
+            dx = int(mouse_pos[0] - x) * (1 / zoom_factor - 1)
+            dy = int(mouse_pos[1] - y) * (1 / zoom_factor - 1)
+
+            core.foreground.move((-dx, -dy))
             context.user_position[0] -= dx
             context.user_position[1] -= dy
 
@@ -111,6 +104,9 @@ class Grid:
                 return
             self.generate_grid()
             core.render_all = True
+
+            core.foreground.update_background(self.surface)
+            core.foreground.render()
 
         options = {
             pygame.BUTTON_MIDDLE: button_middle,
@@ -135,11 +131,18 @@ class Grid:
         if context.is_moving:
             try:
                 mouse_pos = pygame.mouse.get_pos()
-                context.user_position[0] += mouse_pos[0] - self.prev_mouse_pos[0]
-                context.user_position[1] += mouse_pos[1] - self.prev_mouse_pos[1]
+
+                core.foreground.move((mouse_pos[0] - self.prev_mouse_pos[0], mouse_pos[1] - self.prev_mouse_pos[1]))
+
+                core.foreground.update_background(self.surface)
+                core.foreground.render()
+            except TypeError:
+                pass
             finally:
                 self.prev_mouse_pos = pygame.mouse.get_pos()
                 core.render_all = True
 
     def video_resize(self, event: Event):
         self.generate_grid()
+        core.foreground.update_background(self.surface)
+        core.foreground.render()

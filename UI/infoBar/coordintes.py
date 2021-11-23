@@ -24,7 +24,20 @@ class Coordinates:
         self.render()
 
     def render(self):
-        self.mouse_motion()
+        text_render = self.font_consolas.render(' x: {:.0f} y: {:.0f} '.format(
+            context.mouse_coordinates[0],
+            context.mouse_coordinates[1]
+        ), False, (255, 255, 255))
+
+        self.surface.fill((0, 0, 0))
+        self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
+        core.screen.blit(self.surface,
+                         (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
+                         )
+
+        core.dirty_rectangles.append(
+            (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
+        )
         return self.size
 
     def handle_event(self, event: Event):
@@ -43,20 +56,6 @@ class Coordinates:
         if not context.is_moving:
             cursor_position = pygame.mouse.get_pos()
             context.mouse_coordinates = [
-                (cursor_position[0] - context.grid_density // 2 - context.user_position[0]) // context.grid_density,
+                (cursor_position[0] + context.grid_density // 2 - context.user_position[0]) // context.grid_density,
                 -(cursor_position[1] - context.grid_density // 2 - context.user_position[1]) // context.grid_density]
-
-        text_render = self.font_consolas.render(' x: {:.0f} y: {:.0f} '.format(
-            context.mouse_coordinates[0],
-            context.mouse_coordinates[1]
-        ), False, (255, 255, 255))
-
-        self.surface.fill((0, 0, 0))
-        self.surface.blit(text_render, (0, 0, self.size[0], self.size[1]))
-        core.screen.blit(self.surface,
-                         (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
-                         )
-
-        core.dirty_rectangles.append(
-            (self.offset, core.screen.get_height() - self.size[1], self.size[0], self.size[1])
-        )
+            self.render()
