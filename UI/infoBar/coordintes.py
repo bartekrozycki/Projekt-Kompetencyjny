@@ -54,8 +54,10 @@ class Coordinates:
 
     def mouse_motion(self, event: Event = None):
         if not context.is_moving:
-            cursor_position = pygame.mouse.get_pos()
+            mx, my = pygame.mouse.get_pos()
+            rx, ry = core.foreground.rect.topleft
+
             context.mouse_coordinates = [
-                (cursor_position[0] + context.grid_density // 2 - context.user_position[0]) // context.grid_density,
-                -(cursor_position[1] - context.grid_density // 2 - context.user_position[1]) // context.grid_density]
+                (mx + context.grid_density // 2 - rx) // context.grid_density,
+                -(my - context.grid_density // 2 - ry) // context.grid_density]
             self.render()

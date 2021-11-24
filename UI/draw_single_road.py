@@ -51,7 +51,12 @@ class DrawSingleRoad:
         def button_left():
             # if not self.parent.drawing:
             #     return
-            self.start_point = pygame.mouse.get_pos()
+            x, y = context.mouse_coordinates
+            x *= context.grid_density
+            y *= context.grid_density
+            x_fix = core.foreground.rect.x % context.grid_density
+            y_fix = core.foreground.rect.y % context.grid_density
+            self.start_point = (x + x_fix, abs(y))
             self.end_point = pygame.mouse.get_pos()
             # self.dirty_render()
 

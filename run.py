@@ -21,7 +21,7 @@ if __name__ == '__main__':
     grid = Grid()
     # FPSCounter()
     # Zoom()
-    # Coordinates()
+    Coordinates()
     #
     DrawSingleRoad()
     #
@@ -32,11 +32,11 @@ if __name__ == '__main__':
         # for element in core.every_frame_render:
         #     element.render()
 
-        # if core.render_all:
-        #     for renderable in core.renderables:
-        #         renderable.render()
-        #     pygame.display.update()
-        #     core.render_all = False
+        if core.render_all:
+            for renderable in core.renderables:
+                renderable.render()
+            # pygame.display.update()
+            core.render_all = False
         # elif core.dirty_rectangles:
             # for rect in core.background_rectangles:
             #     grid.dirty_render(rect)

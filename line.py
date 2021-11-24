@@ -1,4 +1,3 @@
-
 import math
 
 import pygame
@@ -26,8 +25,6 @@ class Line(pygame.sprite.Sprite):
         top = min(ay, by)
 
         self.rect = pygame.Rect((left, top), size)
-
-        print(start, end)
 
         y_where_x_is_smaller = ay if ax < bx else by
         y_where_x_is_bigger = ay if y_where_x_is_smaller == by else by
