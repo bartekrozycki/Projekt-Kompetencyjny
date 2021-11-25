@@ -7,29 +7,6 @@ context: Context = Context()
 core = Core()
 
 
-def renderable(func):
-    def inner(self, *args, **kwargs):
-        core.renderables.append(self)
-        return func(self, *args, **kwargs)
-
-    return inner
-
-
-def renderable_every_frame(func):
-    def inner(self, *args, **kwargs):
-        core.every_frame_render.append(self)
-        return func(self, *args, **kwargs)
-
-    return inner
-
-
-def event_handler(func):
-    def inner(self, *args, **kwargs):
-        core.event_handlers.append(self)
-        return func(self, *args, **kwargs)
-
-    return inner
-
 
 def rect_from_2points(a, b):
     return correct_rectangle(pygame.Rect(a, (b[0] - a[0], b[1] - a[1])))

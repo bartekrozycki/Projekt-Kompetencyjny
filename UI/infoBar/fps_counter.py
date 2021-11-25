@@ -1,7 +1,7 @@
 import pygame
 from pygame.event import Event
 
-import settings
+import consts
 from resources import core, context, event_handler, renderable_every_frame, renderable
 
 
@@ -15,7 +15,7 @@ class FPSCounter:
         self.font_consolas = pygame.font.SysFont('Consolas', 14)
 
         test_render = self.font_consolas.render(
-            '{}fps: {} '.format(' ' if context.info_bar_width == 0 else '', settings.max_fps), False, (255, 255, 255))
+            '{}fps: {} '.format(' ' if context.info_bar_width == 0 else '', settings.FPS_MAX), False, (255, 255, 255))
 
         self.size = (test_render.get_width(), test_render.get_height())
 

@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-import settings
+import consts
 
 
 class Line(pygame.sprite.Sprite):
@@ -30,6 +30,6 @@ class Line(pygame.sprite.Sprite):
         y_where_x_is_bigger = ay if y_where_x_is_smaller == by else by
 
         if y_where_x_is_smaller > y_where_x_is_bigger:
-            pygame.draw.line(self.image, settings.black, (0, self.rect.h), (self.rect.w, 0))
+            pygame.draw.line(self.image, settings.COLOR_BLACK, (0, self.rect.h), (self.rect.w, 0))
         else:
-            pygame.draw.line(self.image, settings.black, (0, 0), (self.rect.w, self.rect.h))
+            pygame.draw.line(self.image, settings.COLOR_BLACK, (0, 0), (self.rect.w, self.rect.h))

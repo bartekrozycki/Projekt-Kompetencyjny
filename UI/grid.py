@@ -3,9 +3,9 @@ from typing import Callable
 import pygame
 from pygame.event import Event
 
-import settings
+import consts
 from foreground import Foreground
-from resources import event_handler, context, core
+from resources import context, core
 
 
 class Grid:
@@ -14,7 +14,6 @@ class Grid:
 
     prev_mouse_pos = None
 
-    @event_handler
     def __init__(self):
         self.generate_grid()
         core.foreground = Foreground(core.screen, context)
@@ -24,9 +23,9 @@ class Grid:
     def generate_grid(self):
         self.surface = pygame.Surface(core.screen.get_rect().inflate((context.grid_density, context.grid_density)).size)
 
-        self.surface.fill(settings.sky_blue)
+        self.surface.fill(settings.COLOR_SKY_BLUE)
 
-        if context.grid_density <= settings.min_grid_density:
+        if context.grid_density <= settings.MIN_GRID_DENSITY:
             return
 
         dot_size = 2 if context.grid_density > 20 else 1
@@ -59,7 +58,7 @@ class Grid:
 
         # zoom_sensitivity in
         def button_wheel_up():
-            if not context.grid_density <= settings.max_grid_density:
+            if not context.grid_density <= settings.MAX_GRID_DENSITY:
                 return
 
             context.zoom_sensitivity *= zoom_factor
@@ -83,7 +82,7 @@ class Grid:
 
         # zoom_sensitivity out
         def button_wheel_down():
-            if not context.grid_density >= settings.min_grid_density:
+            if not context.grid_density >= settings.MIN_GRID_DENSITY:
                 self.generate_grid()
                 core.render_all = True
                 return
