@@ -14,10 +14,6 @@ if __name__ == '__main__':
 
     BackgroundGrid()
 
-
-
-
-
     running = True
     while running:
         clock.tick(consts.FPS_MAX)
@@ -28,6 +24,5 @@ if __name__ == '__main__':
         core.all_sprites.draw(screen)
         core.all_sprites.update()
         pygame.display.update()
-
 
     pygame.quit()
