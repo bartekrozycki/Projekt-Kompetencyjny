@@ -57,6 +57,7 @@ class Coordinates:
             mx, my = pygame.mouse.get_pos()
             rx, ry = core.foreground.rect.topleft
 
+
             context.mouse_coordinates = [
                 (mx + context.grid_density // 2 - rx) // context.grid_density,
                 -(my - context.grid_density // 2 - ry) // context.grid_density]

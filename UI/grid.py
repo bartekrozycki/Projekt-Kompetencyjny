@@ -80,6 +80,7 @@ class Grid:
             core.render_all = True
 
             core.foreground.update_background(self.surface)
+            core.foreground.update_roads()
             core.foreground.render()
 
         # zoom_sensitivity out
@@ -107,7 +108,9 @@ class Grid:
             core.render_all = True
 
             core.foreground.update_background(self.surface)
+            core.foreground.update_roads()
             core.foreground.render()
+
 
         options = {
             pygame.BUTTON_MIDDLE: button_middle,

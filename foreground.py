@@ -1,5 +1,7 @@
 import pygame.sprite
 
+from resources import context
+
 
 class Foreground(pygame.sprite.Sprite):
     def __init__(self, screen: pygame.Surface, context):
@@ -13,7 +15,7 @@ class Foreground(pygame.sprite.Sprite):
 
     def update_background(self, image: pygame.Surface):
         self.background = pygame.Surface(self.screen.get_size())
-        self.rect = pygame.Rect(self.rect.topleft, self.background.get_size())
+        self.rect.size = self.background.get_size()
 
         gd = self.context.grid_density
         x = -(gd - self.rect.x % gd)
@@ -25,7 +27,14 @@ class Foreground(pygame.sprite.Sprite):
         self.image = pygame.Surface(self.screen.get_size())
         self.image.blit(self.background, (0, 0))
 
+        for road in self.roads:
+            road.draw()
+            road.render()
+
     def move(self, vector: tuple[int, int]):
+        for road in self.roads:
+            road.draw()
+            road.render()
         self.rect = self.rect.move(*vector)
 
     def update_roads(self):
