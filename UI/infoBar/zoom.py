@@ -16,7 +16,7 @@ class Zoom:
 
         test_render = self.font_consolas.render(
             '{}zoom: {:.02f}  '.format(' ' if context.info_bar_width == 0 else '',
-                                       settings.max_grid_density / settings.start_grid_density), False, (255, 255, 255))
+                                       settings.GRID_MAX_DENSITY / settings.GRID_START_DENSITY), False, (255, 255, 255))
 
         self.size = (test_render.get_width(), test_render.get_height())
 

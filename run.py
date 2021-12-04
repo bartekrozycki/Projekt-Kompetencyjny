@@ -16,7 +16,7 @@ if __name__ == '__main__':
     pygame.display.init()
 
     core.clock = pygame.time.Clock()
-    core.screen = pygame.display.set_mode((settings.display_width, settings.display_height), settings.display_flags)
+    core.screen = pygame.display.set_mode((settings.DISPLAY_WIDTH, settings.DISPLAY_HEIGHT), settings.DISPLAY_FLAGS)
 
     grid = Grid()
     # FPSCounter()
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     running = True
     while running:
-        core.clock.tick(settings.max_fps)
+        core.clock.tick(settings.DISPLAY_MAX_FPS)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False

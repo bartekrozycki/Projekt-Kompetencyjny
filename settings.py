@@ -1,16 +1,24 @@
 from pygame import RESIZABLE
 
 
-map_default_pos = [0, 0]
-min_grid_density = 5
-start_grid_density = 10
-max_grid_density = 100
+MAP_DEFAULT_POSITION = [0, 0]
 
-max_fps = 60
+GRID_MIN_DENSITY = 5
+GRID_START_DENSITY = 10
+GRID_MAX_DENSITY = 100
 
-sky_blue = (135, 206, 250)
-black = (0, 0, 0)
+DISPLAY_MAX_FPS = 60
 
-display_width = start_grid_density * 100 + 1
-display_height = start_grid_density * 70 + 1
-display_flags = RESIZABLE
+COLOR_SKY_BLUE = (135, 206, 250)
+COLOR_BLACK = (0, 0, 0)
+
+DISPLAY_WIDTH = GRID_START_DENSITY * 100 + 1
+DISPLAY_HEIGHT = GRID_START_DENSITY * 70 + 1
+DISPLAY_FLAGS = RESIZABLE
+
+# Constants for Sprites `_layer` attribute.
+LAYER_BACKGROUND = 1
+LAYER_ROADS = 2
+
+
+LAYER_UI = 100

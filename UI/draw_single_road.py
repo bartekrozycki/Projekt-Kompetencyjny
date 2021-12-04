@@ -71,7 +71,7 @@ class DrawSingleRoad:
             # single_road = SingleRoad(self.start_point, context.mouse_coordinates)
             # core.road_group.add(single_road)
             # self.dirty_render()
-            pygame.draw.line(core.foreground.image, settings.black, self.start_point, self.end_point)
+            pygame.draw.line(core.foreground.image, settings.COLOR_BLACK, self.start_point, self.end_point)
             core.foreground.render()
             self.start_point = None
             self.end_point = None

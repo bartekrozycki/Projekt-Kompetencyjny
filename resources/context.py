@@ -9,7 +9,7 @@ class Context:
 
     info_bar_width = 0
 
-    grid_density = settings.start_grid_density
-    user_position = settings.map_default_pos
+    grid_density = settings.GRID_START_DENSITY
+    user_position = settings.MAP_DEFAULT_POSITION
 
     is_drawing = False
