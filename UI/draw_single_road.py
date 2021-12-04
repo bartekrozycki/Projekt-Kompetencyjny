@@ -1,10 +1,9 @@
 import pygame
 from pygame.event import Event
 
-import settings
-from UI.single_road import SingleRoad
 from line import Line
-from resources import context, core, rect_from_2points, correct_rectangle
+from resources import context, core, correct_rectangle
+from const import color
 
 
 class DrawSingleRoad:
@@ -71,7 +70,7 @@ class DrawSingleRoad:
             # single_road = SingleRoad(self.start_point, context.mouse_coordinates)
             # core.road_group.add(single_road)
             # self.dirty_render()
-            pygame.draw.line(core.foreground.image, settings.COLOR_BLACK, self.start_point, self.end_point)
+            pygame.draw.line(core.foreground.image, color.BLACK, self.start_point, self.end_point)
             core.foreground.render()
             self.start_point = None
             self.end_point = None

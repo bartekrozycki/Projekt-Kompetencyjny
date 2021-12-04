@@ -6,6 +6,7 @@ from pygame.event import Event
 import settings
 from foreground import Foreground
 from resources import event_handler, context, core
+from const import color
 
 
 class Grid:
@@ -24,7 +25,7 @@ class Grid:
     def generate_grid(self):
         self.surface = pygame.Surface(core.screen.get_rect().inflate((context.grid_density, context.grid_density)).size)
 
-        self.surface.fill(settings.COLOR_SKY_BLUE)
+        self.surface.fill(color.SKY_BLUE)
 
         if context.grid_density <= settings.GRID_MIN_DENSITY:
             return
