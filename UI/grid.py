@@ -136,6 +136,7 @@ class Grid:
                 core.foreground.move((mouse_pos[0] - self.prev_mouse_pos[0], mouse_pos[1] - self.prev_mouse_pos[1]))
 
                 core.foreground.update_background(self.surface)
+                core.foreground.update_roads()
                 core.foreground.render()
             except TypeError:
                 pass

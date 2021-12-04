@@ -2,7 +2,9 @@ import math
 
 import pygame
 
+import settings
 from const import color
+from resources import context
 
 
 class Line(pygame.sprite.Sprite):
@@ -11,25 +13,28 @@ class Line(pygame.sprite.Sprite):
 
     def __init__(self, start: tuple[int, int], end: tuple[int, int]):
         super().__init__()
+
         self.start = start
         self.end = end
 
         ax, ay = start
         bx, by = end
 
-        self.length = math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
-        size = (abs(bx - ax), abs(by - ay))
-        self.image = pygame.Surface(size, pygame.SRCALPHA, 32)
+        delta_x = bx - ax
+        delta_y = by - ay
+        theta_radians = math.atan2(delta_y, delta_x)
 
-        left = min(ax, bx)
-        top = min(ay, by)
+        width = abs(delta_x)
+        height = abs(delta_y)
 
-        self.rect = pygame.Rect((left, top), size)
-
-        y_where_x_is_smaller = ay if ax < bx else by
-        y_where_x_is_bigger = ay if y_where_x_is_smaller == by else by
-
-        if y_where_x_is_smaller > y_where_x_is_bigger:
-            pygame.draw.line(self.image, color.BLACK, (0, self.rect.h), (self.rect.w, 0))
+        if math.pi * 3/4 > theta_radians > math.pi * 1/4 or -math.pi * 3/4 < theta_radians < -math.pi * 1/4:
+            self.rect = pygame.Rect((0, 0), (context.grid_density, (height + 1) * context.grid_density))
+            self.rect.centerx = ax * context.grid_density
+            self.rect.centery = -ay * context.grid_density - delta_y * context.grid_density // 2
         else:
-            pygame.draw.line(self.image, color.BLACK, (0, 0), (self.rect.w, self.rect.h))
+            self.rect = pygame.Rect((0, 0), ((width + 1) * context.grid_density, context.grid_density))
+            self.rect.centerx = ax * context.grid_density + delta_x * context.grid_density // 2
+            self.rect.centery = -ay * context.grid_density
+
+        self.image = pygame.Surface(self.rect.size, pygame.SRCALPHA, 32)
+        self.image.fill(color.BLACK)

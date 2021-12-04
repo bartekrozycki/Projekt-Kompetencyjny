@@ -9,6 +9,7 @@ class Foreground(pygame.sprite.Sprite):
         self.rect = pygame.Rect((0, 0), screen.get_size())
         self.screen = screen
         self.context = context
+        self.roads = pygame.sprite.Group()
 
     def update_background(self, image: pygame.Surface):
         self.background = pygame.Surface(self.screen.get_size())
@@ -26,6 +27,9 @@ class Foreground(pygame.sprite.Sprite):
 
     def move(self, vector: tuple[int, int]):
         self.rect = self.rect.move(*vector)
+
+    def update_roads(self):
+        self.roads.draw(self.image)
 
     def render(self):
         self.screen.blit(self.image, (0, 0))

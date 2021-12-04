@@ -2,37 +2,17 @@ import pygame
 from pygame.event import Event
 
 from line import Line
-from resources import context, core, correct_rectangle
-from const import color
+from resources import context, core, rect_from_2points, correct_rectangle
 
 
 class DrawSingleRoad:
-    start_point = None
-    end_point = None
-    rectangle = pygame.Rect(0, 0, 0, 0)
-
+    start = None
+    end = None
     group = pygame.sprite.GroupSingle()
 
     def __init__(self):
         core.event_handlers.append(self)
         pass
-
-    def dirty_render(self):
-        core.background_rectangles.append(correct_rectangle(self.rectangle))
-
-        a = (self.start_point[0] * context.grid_density + context.user_position[0],
-             -self.start_point[1] * context.grid_density + context.user_position[1])
-        b = self.end_point
-
-        self.rectangle = Line(a, b).get_rect().inflate(2, 2)
-
-        core.roads_to_draw.append((a, b))
-
-        # for line in core.lines:
-        #     if line.colliderect(self.rectangle):
-        #         core.roads_to_draw.append((line.start, line.end))
-
-        core.dirty_rectangles.append(self.rectangle)
 
     def handle_event(self, event: Event):
         options = {
@@ -48,17 +28,7 @@ class DrawSingleRoad:
 
     def mouse_button_down(self, event: Event):
         def button_left():
-            # if not self.parent.drawing:
-            #     return
-            x, y = context.mouse_coordinates
-            x *= context.grid_density
-            y *= context.grid_density
-            x_fix = core.foreground.rect.x % context.grid_density
-            y_fix = core.foreground.rect.y % context.grid_density
-            self.start_point = (x + x_fix, abs(y))
-            self.end_point = pygame.mouse.get_pos()
-            # self.dirty_render()
-
+            self.start = tuple(context.mouse_coordinates)
 
         options = {
             pygame.BUTTON_LEFT: button_left,
@@ -67,13 +37,11 @@ class DrawSingleRoad:
 
     def mouse_button_up(self, event: Event):
         def button_left():
-            # single_road = SingleRoad(self.start_point, context.mouse_coordinates)
-            # core.road_group.add(single_road)
-            # self.dirty_render()
-            pygame.draw.line(core.foreground.image, color.BLACK, self.start_point, self.end_point)
+            core.foreground.roads.add(self.group.sprite)
+            core.foreground.update_roads()
             core.foreground.render()
-            self.start_point = None
-            self.end_point = None
+            self.start = None
+            self.end = None
 
         options = {
             pygame.BUTTON_LEFT: button_left,
@@ -81,11 +49,15 @@ class DrawSingleRoad:
         options[event.button]()
 
     def mouse_motion(self, event: Event):
-        if self.start_point is not None:
-            if self.group.sprites():
-                self.group.clear(core.screen, core.foreground.image)
+        if self.start is None or self.end == tuple(context.mouse_coordinates):
+            return
 
-            self.end_point = pygame.mouse.get_pos()
-            self.group.empty()
-            self.group.add(Line(self.start_point, self.end_point))
-            self.group.draw(core.screen)
+        self.group.clear(core.screen, core.foreground.image)
+        self.group.empty()
+
+        self.end = tuple(context.mouse_coordinates)
+
+        line = Line(self.start, self.end)
+
+        self.group.add(line)
+        self.group.draw(core.screen)
