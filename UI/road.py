@@ -2,12 +2,11 @@ import math
 
 import pygame
 
-import settings
 from const import color
 from resources import context, core
 
 
-class Line(pygame.sprite.Sprite):
+class Road(pygame.sprite.Sprite):
     start: tuple[int, int]
     end: tuple[int, int]
 

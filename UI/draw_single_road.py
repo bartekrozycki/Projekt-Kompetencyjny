@@ -1,8 +1,8 @@
 import pygame
 from pygame.event import Event
 
-from line import Line
-from resources import context, core, rect_from_2points, correct_rectangle
+from UI.road import Road
+from resources import context, core
 
 
 class DrawSingleRoad:
@@ -57,7 +57,7 @@ class DrawSingleRoad:
 
         self.end = tuple(context.mouse_coordinates)
 
-        line = Line(self.start, self.end)
+        line = Road(self.start, self.end)
 
         self.group.add(line)
         self.group.draw(core.screen)
