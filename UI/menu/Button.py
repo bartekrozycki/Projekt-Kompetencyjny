@@ -35,7 +35,7 @@ class Button(pygame.sprite.DirtySprite):
             if self.onActivate:
                 self.onActivate()
         else:
-            pygame.draw.rect(self.image, color.GREEN, [0, 0, self.rect.w, self.rect.h], 1)
+            pygame.draw.rect(self.image, color.BLACK, [0, 0, self.rect.w, self.rect.h], 1)
             self.dirty = 1
             if self.onDeactivate:
                 self.onDeactivate()
