@@ -1,4 +1,5 @@
 import settings
+from const import tool
 
 
 class Context:
@@ -13,3 +14,10 @@ class Context:
     user_position = settings.MAP_DEFAULT_POSITION
 
     is_drawing = False
+
+    drawing_active = False
+
+    _active_tool = tool.BASIC_CURSOR
+
+    def is_tool_active(self, t: tool):
+        return self._active_tool == t

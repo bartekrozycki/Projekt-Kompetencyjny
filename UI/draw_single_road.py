@@ -2,6 +2,7 @@ import pygame
 from pygame.event import Event
 
 from UI.road import Road
+from const import tool
 from resources import context, core
 
 
@@ -15,6 +16,9 @@ class DrawSingleRoad:
         pass
 
     def handle_event(self, event: Event):
+        if not context.is_tool_active(tool.DRAW_ROAD):
+            return
+
         options = {
             pygame.MOUSEBUTTONDOWN: self.mouse_button_down,
             pygame.MOUSEBUTTONUP: self.mouse_button_up,

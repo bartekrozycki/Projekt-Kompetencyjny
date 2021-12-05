@@ -2,9 +2,11 @@ import pygame
 
 from resources._core import Core
 from resources.context import Context
+from resources.images import Images
 
 context: Context = Context()
 core = Core()
+images = Images()
 
 
 def renderable(func):
@@ -22,7 +24,7 @@ def renderable_every_frame(func):
 
     return inner
 
-
+# if handler returns True, all other handler ll be cancelled.
 def event_handler(func):
     def inner(self, *args, **kwargs):
         core.event_handlers.append(self)

@@ -7,6 +7,7 @@ from foreground import Foreground
 
 class Core:
     screen: Surface
+    screen_rect: pygame.rect.Rect
     foreground: Foreground
     clock: Clock
 
@@ -20,6 +21,8 @@ class Core:
     lines = []
 
     road_group = pygame.sprite.Group()
+
+    group_ui_menu_buttons = pygame.sprite.LayeredDirty()
 
 
 
