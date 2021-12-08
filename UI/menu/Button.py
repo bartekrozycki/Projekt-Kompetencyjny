@@ -5,32 +5,34 @@ import pygame
 from const import color
 from resources import core, images
 
-WIDTH = 30
+BUTTON_WIDTH = 30
 
 
 class Button(pygame.sprite.DirtySprite):
     _active = False
 
-    def __init__(self, parent: pygame.Surface, image, topOffset, onActivate: Callable = None,
-                 onDeactivate: Callable = None):
+    drawActive = lambda self, color: pygame.draw.rect(self.image, color, [0, 0, self.rect.w, self.rect.h], 1)
+
+    def __init__(self, image, position, onActivate: Callable = None, onDeactivate: Callable = None):
         super().__init__(core.group_ui_menu_buttons)
         self.onActivate = onActivate
         self.onDeactivate = onDeactivate
-        parent_rect = parent.get_rect()
-
         self.image = image
-        self.image = pygame.transform.scale(self.image, (WIDTH, WIDTH))
 
+        leftOffset, topOffset = position
+
+        self.image = pygame.transform.scale(self.image, (BUTTON_WIDTH, BUTTON_WIDTH))
         self.rect = self.image.get_rect()
+
         pygame.draw.rect(self.image, color.BLACK, self.rect, 1)
 
         self.rect.top = topOffset
-        self.rect.centerx = parent_rect.centerx
+        self.rect.left = leftOffset
 
     def toggle(self):
         self._active = not self._active
         if self._active:
-            pygame.draw.rect(self.image, color.RED, [0, 0, self.rect.w, self.rect.h], 1)
+            self.drawActive(color.RED)
             self.dirty = 1
             if self.onActivate:
                 self.onActivate()

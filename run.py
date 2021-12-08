@@ -6,7 +6,17 @@ from UI.draw_single_road import DrawSingleRoad
 from UI.grid import Grid
 from UI.infoBar.coordintes import Coordinates
 from UI.menu import Menu
-from resources import core
+from const import tool
+from resources import core, images, context
+
+
+def set_active_tool_to_basic_cursor_callback():
+    context._active_tool = tool.BASIC_CURSOR
+
+
+def set_active_tool_to_draw_road_callback():
+    context._active_tool = tool.DRAW_ROAD
+
 
 if __name__ == '__main__':
     pygame.font.init()
@@ -16,7 +26,13 @@ if __name__ == '__main__':
     core.screen = pygame.display.set_mode((settings.DISPLAY_WIDTH, settings.DISPLAY_HEIGHT), settings.DISPLAY_FLAGS)
     core.screen_rect = core.screen.get_rect()
 
-    menu = pygame.sprite.GroupSingle(Menu())
+    menu = pygame.sprite.GroupSingle(
+        Menu([
+            (images.cursor, set_active_tool_to_basic_cursor_callback),
+            (images.road, set_active_tool_to_draw_road_callback),
+        ], (1, 2)
+        )
+    )
 
     grid = Grid()
     # FPSCounter()
