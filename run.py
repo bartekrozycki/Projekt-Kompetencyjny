@@ -5,7 +5,7 @@ import settings
 from UI.draw_single_road import DrawSingleRoad
 from UI.grid import Grid
 from UI.infoBar.coordintes import Coordinates
-from UI.menu import Menu
+from UI.menu import ButtonMenu
 from const import tool
 from resources import core, images, context
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     core.screen_rect = core.screen.get_rect()
 
     menu = pygame.sprite.GroupSingle(
-        Menu([
+        ButtonMenu([
             (images.cursor, set_active_tool_to_basic_cursor_callback),
             (images.road, set_active_tool_to_draw_road_callback),
         ], (1, 2)
