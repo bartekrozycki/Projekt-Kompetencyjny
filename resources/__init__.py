@@ -3,10 +3,12 @@ import pygame
 from resources._core import Core
 from resources.context import Context
 from resources.images import Images
+from resources.tool import ActiveTool
 
 context: Context = Context()
 core = Core()
 images = Images()
+activeTool = ActiveTool()
 
 
 def renderable(func):

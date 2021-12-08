@@ -2,8 +2,8 @@ import pygame
 from pygame.event import Event
 
 from UI.road import Road
-from const import tool
-from resources import context, core
+from resources import context, core, activeTool
+from resources.tool import DRAW_ROAD
 
 
 class DrawSingleRoad:
@@ -16,7 +16,7 @@ class DrawSingleRoad:
         pass
 
     def handle_event(self, event: Event):
-        if not context.is_tool_active(tool.DRAW_ROAD):
+        if not activeTool.isActive(DRAW_ROAD):
             return
 
         options = {

@@ -6,17 +6,7 @@ from UI.draw_single_road import DrawSingleRoad
 from UI.grid import Grid
 from UI.infoBar.coordintes import Coordinates
 from UI.menu import ButtonMenu
-from const import tool
-from resources import core, images, context
-
-
-def set_active_tool_to_basic_cursor_callback():
-    context._active_tool = tool.BASIC_CURSOR
-
-
-def set_active_tool_to_draw_road_callback():
-    context._active_tool = tool.DRAW_ROAD
-
+from resources import core, images, activeTool
 
 if __name__ == '__main__':
     pygame.font.init()
@@ -28,8 +18,8 @@ if __name__ == '__main__':
 
     menu = pygame.sprite.GroupSingle(
         ButtonMenu([
-            (images.cursor, set_active_tool_to_basic_cursor_callback),
-            (images.road, set_active_tool_to_draw_road_callback),
+            (images.cursor, activeTool.setBasicCursor),
+            (images.road, activeTool.setDrawRoad),
         ], (1, 2)
         )
     )

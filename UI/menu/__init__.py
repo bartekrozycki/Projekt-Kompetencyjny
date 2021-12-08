@@ -1,36 +1,54 @@
 import pygame
 from pygame.event import Event
 
-from UI.menu.Button import Button, WIDTH
-from const import color, tool
-from resources import core, event_handler, context, images
+from UI.menu.Button import Button, BUTTON_WIDTH
+from const import color
+from resources import core, event_handler
 
 
-class Menu(pygame.sprite.Sprite):
+class ButtonMenu(pygame.sprite.Sprite):
     active: Button = None
 
     @event_handler
-    def __init__(self):
+    def __init__(self, props, size: (int, int), frame_offset=(15, 10), item_offset=(5, 5)):
         super().__init__()
-        button_count = 2
-        self.image = pygame.surface.Surface((10 * 2 + WIDTH,
-                                             10 * (1 + button_count) + WIDTH * button_count))  # width, height = [10*2 + BUTTON->WIDTH, 10*2 + 30 * COUNT_OF_BUTTON]
-        self.image.fill((255, 255, 255))
+
+        cols, rows = size
+        width_offset, height_offset = frame_offset
+        width_item_offset, height_item_offset = item_offset
+
+        width_total = width_offset * 2
+        width_total += cols * BUTTON_WIDTH
+        width_total += (cols - 1) * width_item_offset
+
+        height_total = height_offset * 2
+        height_total += rows * BUTTON_WIDTH
+        height_total += (rows - 1) * height_item_offset
+
+        left_offset = lambda pos: width_offset + \
+                                  ((pos - 1) * width_item_offset) + \
+                                  ((pos - 1) * BUTTON_WIDTH)
+
+        top_offset = lambda pos: height_offset + \
+                                 ((pos - 1) * height_item_offset) + \
+                                 ((pos - 1) * BUTTON_WIDTH)
+
+        self.image = pygame.surface.Surface((width_total, height_total))
         self.rect = self.image.get_rect()
+
+        self.image.fill((255, 255, 255))
         pygame.draw.rect(self.image, color.BLACK, self.rect, 1)
+
         self.rect.top = 100
         self.rect.right = core.screen_rect.right
 
-        self.a = Button(self.image, images.cursor, 10, onActivate=self.set_active_tool_to_basic_cursor_callback)
-        self.b = Button(self.image, images.road, 50, onActivate=self.set_active_tool_to_draw_road_callback)
-
-    @staticmethod
-    def set_active_tool_to_basic_cursor_callback():
-        context._active_tool = tool.BASIC_CURSOR
-
-    @staticmethod
-    def set_active_tool_to_draw_road_callback():
-        context._active_tool = tool.DRAW_ROAD
+        for col in range(1, cols + 1):
+            for row in range(1, rows + 1):
+                try:
+                    img, activate = props[(((col - 1) * rows) + row) - 1]
+                    Button(img, (left_offset(col), top_offset(row)), onActivate=activate)
+                except IndexError:
+                    pass
 
     def handle_event(self, event: Event):
         if event.type == pygame.MOUSEBUTTONUP:
