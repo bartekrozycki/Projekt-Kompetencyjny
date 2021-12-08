@@ -6,7 +6,7 @@ from const import color
 from resources import core, event_handler
 
 
-class ButtonMenu(pygame.sprite.Sprite):
+class ButtonMenu(pygame.sprite.DirtySprite):
     active: Button = None
 
     @event_handler
@@ -39,8 +39,8 @@ class ButtonMenu(pygame.sprite.Sprite):
         self.image.fill((255, 255, 255))
         pygame.draw.rect(self.image, color.BLACK, self.rect, 1)
 
-        self.rect.top = 100
-        self.rect.right = core.screen_rect.right
+        self.rect.top = core.screen_rect.top + 5
+        self.rect.left = core.screen_rect.left + 5
 
         for col in range(1, cols + 1):
             for row in range(1, rows + 1):

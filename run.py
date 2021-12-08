@@ -20,7 +20,8 @@ if __name__ == '__main__':
         ButtonMenu([
             (images.cursor, activeTool.setBasicCursor),
             (images.road, activeTool.setDrawRoad),
-        ], (1, 2)
+            (images.road, activeTool.setDrawRoad),
+        ], (1, 3)
         )
     )
 
