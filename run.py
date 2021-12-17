@@ -5,6 +5,8 @@ from src import state, logic, ui, constants
 
 if __name__ == '__main__':
     pygame.font.init()
+    state.font_consolas = pygame.font.SysFont('Consolas', 15)
+
     pygame.display.init()
 
     state.resolution = (pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 150)
@@ -15,8 +17,8 @@ if __name__ == '__main__':
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0), logic.background_display_rectangle(0, 0))
 
-    logic.create_button(logic.mode_cursor)
-    logic.create_button(logic.mode_draw_single)
+    logic.create_button(logic.mode_cursor, "nothing")
+    logic.create_button(logic.mode_draw_single, "draw road")
 
     pygame.display.update()
 

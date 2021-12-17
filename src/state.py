@@ -21,3 +21,5 @@ drawing = False
 
 mouse_pos = SimpleNamespace(x=0, y=0)
 coordinates = SimpleNamespace(x=0, y=0)
+
+font_consolas = None
