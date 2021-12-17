@@ -13,6 +13,8 @@ window = None
 
 background: pygame.sprite.Sprite
 
+roads = []
+
 clock = pygame.time.Clock()
 
 drawing = False

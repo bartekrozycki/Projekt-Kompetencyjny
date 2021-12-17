@@ -2,8 +2,7 @@ from types import SimpleNamespace
 
 import pygame
 
-import src.constants
-from src import state
+from src import state, constants
 
 
 def menu_mouse_button_down(event: pygame.event.Event):
@@ -14,11 +13,15 @@ def menu_mouse_button_down(event: pygame.event.Event):
 
 
 # drawing road
-start = None
+start = SimpleNamespace(x=0, y=0)
 end = None
+prev_rect = pygame.Rect(0, 0, 0, 0)
+
 
 def board_mouse_button_up(event: pygame.event.Event):
     global end
+    state.roads.append(SimpleNamespace(start=start, end=end))
+    pygame.draw.rect(state.background.image, constants.BLACK, prev_rect.move(*state.resolution))
     end = None
 
 
@@ -26,19 +29,39 @@ def board_mouse_button_down(event: pygame.event.Event):
     global start, end
     start = SimpleNamespace(**state.coordinates.__dict__)
     end = SimpleNamespace(**state.coordinates.__dict__)
+    rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size, state.cell.size)
+    pygame.draw.rect(state.window, constants.BLACK, rect)
+    pygame.display.update()
 
 
 def board_mouse_motion(event: pygame.event.Event):
-    global end
+    global end, prev_rect
 
     if end is None or (end.x == state.coordinates.x and end.y == state.coordinates.y):
         return
     end = SimpleNamespace(**state.coordinates.__dict__)
 
-    diff = end.x - start.x
-    rect = (end.x * state.cell.size, end.y * state.cell.size, state.cell.size, state.cell.size)
-    pygame.draw.rect(state.window, src.constants.BLACK, rect)
+    diff_x = abs(end.x - start.x)
+    diff_y = abs(end.y - start.y)
+    if diff_x > diff_y:
+        rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size * diff_x,
+                           state.cell.size)
+        if start.x > end.x:
+            rect = rect.move(-diff_x * state.cell.size, 0)
+        else:
+            rect.width += state.cell.size
+    else:
+        rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size,
+                           state.cell.size * diff_y)
+        if start.y > end.y:
+            rect = rect.move(0, -diff_y * state.cell.size)
+        else:
+            rect.height += state.cell.size
+
+    state.window.blit(state.background.image, prev_rect, prev_rect.move(*state.resolution))
+    pygame.draw.rect(state.window, constants.BLACK, rect)
     pygame.display.update()
+    prev_rect = rect
 
 
 def handle_event(event: pygame.event.Event):
