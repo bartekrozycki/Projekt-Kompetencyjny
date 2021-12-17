@@ -1,66 +1,61 @@
 import pygame
-from pygame.constants import *
+from pygame.event import Event
 
-import settings
-from UI.draw_single_road import DrawSingleRoad
-from UI.grid import Grid
-from UI.infoBar.coordintes import Coordinates
-from UI.menu import ButtonMenu
-from resources import core, images, activeTool
+from src import state, logic, ui, constants
 
 if __name__ == '__main__':
     pygame.font.init()
     pygame.display.init()
 
-    core.clock = pygame.time.Clock()
-    core.screen = pygame.display.set_mode((settings.DISPLAY_WIDTH, settings.DISPLAY_HEIGHT), settings.DISPLAY_FLAGS)
-    core.screen_rect = core.screen.get_rect()
+    state.resolution = (pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 150)
+    state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
 
-    menu = pygame.sprite.GroupSingle(
-        ButtonMenu([
-            (images.cursor, activeTool.setBasicCursor),
-            (images.road, activeTool.setDrawRoad),
-            (images.road, activeTool.setDrawRoad),
-        ], (1, 3)
-        )
-    )
+    state.background = logic.create_background(-state.resolution[0], -state.resolution[1])
 
-    grid = Grid()
-    # FPSCounter()
-    # Zoom()
-    Coordinates()
-    #
-    #
-    DrawSingleRoad()
+    pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
+    state.window.blit(state.background.image, (state.menu.width, 0), logic.background_display_rectangle(0, 0))
+
+    logic.create_button(logic.mode_cursor)
+    logic.create_button(logic.mode_draw_single)
+
+    pygame.display.update()
 
 
-    #
-    # DrawRoadButton()
+    def mouse_motion(event: Event):
+        state.mouse_pos.x = event.pos[0]
+        state.mouse_pos.y = event.pos[1]
 
-    def render():
-        if core.render_all:
-            for renderable in core.renderables:
-                renderable.render()
-            core.render_all = False
-        menu.draw(core.screen)
-        core.group_ui_menu_buttons.draw(menu.sprite.image)
+        state.coordinates.x = event.pos[0] // state.cell.size
+        state.coordinates.y = event.pos[1] // state.cell.size
+
+
+    def video_resize(event: Event):
+        state.resolution = event.size
+        state.background = logic.create_background(*state.background.rect.topleft)
+        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
+        state.window.blit(state.background.image, (state.menu.width, 0), logic.background_display_rectangle(0, 0))
         pygame.display.update()
 
+
+    window_events = {
+        pygame.MOUSEMOTION: mouse_motion,
+        pygame.VIDEORESIZE: video_resize,
+    }
 
     running = True
     while running:
         events = pygame.event.get()
-        for event in events:
-            if event.type == QUIT:
+        for e in events:
+            if e.type == pygame.QUIT:
                 running = False
                 break
-            elif event.type == VIDEORESIZE:
-                core.render_all = True
-            for event_handler in core.event_handlers:
-                handle_event = event_handler.handle_event(event)
-                if handle_event:
-                    break
-        render()
 
-        core.clock.tick(settings.DISPLAY_MAX_FPS)
+            try:
+                window_events[e.type](e)
+            except KeyError:
+                pass
+            ui.handle_event(e)
+
+        state.clock.tick(state.fps_limit)
+
     pygame.quit()
