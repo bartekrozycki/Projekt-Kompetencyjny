@@ -36,8 +36,9 @@ def board_mouse_motion(event: pygame.event.Event):
     end = SimpleNamespace(**state.coordinates.__dict__)
 
     diff = end.x - start.x
-    rect = (end.x * state.cell.size, end.y * state.cell.size, state.cell.size)
-    pygame.draw.rect(state.window, src.constants.BLACK, ())
+    rect = (end.x * state.cell.size, end.y * state.cell.size, state.cell.size, state.cell.size)
+    pygame.draw.rect(state.window, src.constants.BLACK, rect)
+    pygame.display.update()
 
 
 def handle_event(event: pygame.event.Event):
