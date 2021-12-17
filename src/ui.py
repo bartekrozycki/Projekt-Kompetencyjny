@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import pygame
 
-from src import state, constants
+from src import state, constants, logic
 
 
 def menu_mouse_button_down(event: pygame.event.Event):
@@ -41,22 +41,7 @@ def board_mouse_motion(event: pygame.event.Event):
         return
     end = SimpleNamespace(**state.coordinates.__dict__)
 
-    diff_x = abs(end.x - start.x)
-    diff_y = abs(end.y - start.y)
-    if diff_x > diff_y:
-        rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size * diff_x,
-                           state.cell.size)
-        if start.x > end.x:
-            rect = rect.move(-diff_x * state.cell.size, 0)
-        else:
-            rect.width += state.cell.size
-    else:
-        rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size,
-                           state.cell.size * diff_y)
-        if start.y > end.y:
-            rect = rect.move(0, -diff_y * state.cell.size)
-        else:
-            rect.height += state.cell.size
+    rect = logic.create_ver_hor_rectangle(start, end, state.cell.size)
 
     state.window.blit(state.background.image, prev_rect, prev_rect.move(*state.resolution))
     pygame.draw.rect(state.window, constants.BLACK, rect)

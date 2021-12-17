@@ -23,16 +23,40 @@ def background_display_rectangle(x, y):
 
 
 def create_button(function):
-    button = SimpleNamespace(rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20), use=function)
+    button = SimpleNamespace(rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20),
+                             use=function)
     pygame.draw.rect(state.window, constants.WHITE, button.rect)
     state.buttons.append(button)
+
 
 def mode_cursor():
     state.background = create_background(*state.background.rect.topleft, constants.RED)
     state.window.blit(state.background.image, (state.menu.width, 0), background_display_rectangle(0, 0))
     pygame.display.update()
 
+
 def mode_draw_single():
     state.background = create_background(*state.background.rect.topleft, constants.SKY_BLUE)
     state.window.blit(state.background.image, (state.menu.width, 0), background_display_rectangle(0, 0))
     pygame.display.update()
+
+
+def create_ver_hor_rectangle(start, end, thickness):
+    diff_x = abs(end.x - start.x)
+    diff_y = abs(end.y - start.y)
+    if diff_x > diff_y:
+        rect = pygame.Rect(start.x * thickness, start.y * thickness, thickness * diff_x,
+                           thickness)
+        if start.x > end.x:
+            rect = rect.move(-diff_x * thickness, 0)
+        else:
+            rect.width += thickness
+    else:
+        rect = pygame.Rect(start.x * thickness, start.y * thickness, thickness,
+                           thickness * diff_y)
+        if start.y > end.y:
+            rect = rect.move(0, -diff_y * thickness)
+        else:
+            rect.height += thickness
+
+    return rect
