@@ -30,15 +30,11 @@ def create_button(function):
 
 
 def mode_cursor():
-    state.background = create_background(*state.background.rect.topleft, constants.RED)
-    state.window.blit(state.background.image, (state.menu.width, 0), background_display_rectangle(0, 0))
-    pygame.display.update()
+    state.drawing = False
 
 
 def mode_draw_single():
-    state.background = create_background(*state.background.rect.topleft, constants.SKY_BLUE)
-    state.window.blit(state.background.image, (state.menu.width, 0), background_display_rectangle(0, 0))
-    pygame.display.update()
+    state.drawing = True
 
 
 def create_ver_hor_rectangle(start, end, thickness):

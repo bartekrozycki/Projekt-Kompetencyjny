@@ -27,6 +27,10 @@ def board_mouse_button_up(event: pygame.event.Event):
 
 def board_mouse_button_down(event: pygame.event.Event):
     global start, end
+
+    if not state.drawing:
+        return
+
     start = SimpleNamespace(**state.coordinates.__dict__)
     end = SimpleNamespace(**state.coordinates.__dict__)
     rect = pygame.Rect(start.x * state.cell.size, start.y * state.cell.size, state.cell.size, state.cell.size)
