@@ -9,10 +9,10 @@ if __name__ == '__main__':
 
     pygame.display.init()
 
-    state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
+    res_w, res_h = state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
     state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
 
-    state.background = logic.create_background(-state.resolution[0], -state.resolution[1])
+    state.background = logic.create_background(-res_w, -res_h)
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
@@ -37,11 +37,11 @@ if __name__ == '__main__':
         for x in state.roads:
             x.draw()
 
-        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
         state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
+        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
         for x in state.buttons:
-            x.render()
+            x.draw()
 
         pygame.display.update()
 
