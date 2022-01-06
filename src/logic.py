@@ -29,7 +29,7 @@ def create_button(function, text=""):
 
     def update():
         pygame.draw.rect(state.window, constants.WHITE, button.rect)
-        state.window.blit(text_render, button.rect)
+        state.window.blit(text_render, button.rect.move(3,3))
 
     button.render = update
     update()
