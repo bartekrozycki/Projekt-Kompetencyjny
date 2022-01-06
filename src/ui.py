@@ -59,7 +59,7 @@ def board_mouse_motion(event: pygame.event.Event):
 
     rect = logic.create_ver_hor_rectangle(start, end, state.cell.size)
 
-    state.window.blit(state.background.image, prev_rect, prev_rect.move(*state.resolution))
+    state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
     pygame.draw.rect(state.window, constants.BLACK, rect)
     pygame.display.update()
     prev_rect = rect

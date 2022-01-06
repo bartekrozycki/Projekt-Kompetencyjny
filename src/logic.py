@@ -29,7 +29,7 @@ def create_button(function, text=""):
 
     button.render = lambda : (
         pygame.draw.rect(state.window, constants.WHITE, button.rect),
-        state.window.blit(text_render, button.rect.move(3,3))
+        state.window.blit(text_render, button.rect.move(button.rect.w//2 - text_render.get_rect().w//2,3))
     )
     button.render()
 

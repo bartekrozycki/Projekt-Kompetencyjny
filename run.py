@@ -9,13 +9,13 @@ if __name__ == '__main__':
 
     pygame.display.init()
 
-    state.resolution = (pygame.display.Info().current_w - 100, pygame.display.Info().current_h - 150)
+    state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
     state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
 
     state.background = logic.create_background(-state.resolution[0], -state.resolution[1])
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
-    state.window.blit(state.background.image, (state.menu.width, 0), logic.background_display_rectangle(0, 0))
+    state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
     logic.create_button(logic.mode_cursor, "nothing")
     logic.create_button(logic.mode_draw_single, "draw road")
@@ -33,12 +33,12 @@ if __name__ == '__main__':
 
     def video_resize(event: Event):
         state.resolution = event.size
-        state.background = logic.create_background(*state.background.rect.topleft)
+        state.background = logic.create_background(*state.background.rect.topleft) # create background
         for x in state.roads:
             x.draw()
 
         pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
-        state.window.blit(state.background.image, (state.menu.width, 0), logic.background_display_rectangle(0, 0))
+        state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
         for x in state.buttons:
             x.render()
