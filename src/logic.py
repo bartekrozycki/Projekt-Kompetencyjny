@@ -27,12 +27,12 @@ def create_button(function, text=""):
                              use=function, text=text)
     text_render = state.font_consolas.render(text, False, constants.BLACK)
 
-    def update():
-        pygame.draw.rect(state.window, constants.WHITE, button.rect)
+    button.render = lambda : (
+        pygame.draw.rect(state.window, constants.WHITE, button.rect),
         state.window.blit(text_render, button.rect.move(3,3))
+    )
+    button.render()
 
-    button.render = update
-    update()
     state.buttons.append(button)
 
 

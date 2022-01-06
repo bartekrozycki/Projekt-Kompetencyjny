@@ -21,10 +21,16 @@ prev_rect = pygame.Rect(0, 0, 0, 0)
 def board_mouse_button_up(event: pygame.event.Event):
     if event.button is not constants.MOUSE_LEFT_CLICKED:
         return
+    global start, end, prev_rect
 
-    global end
-    state.roads.append(SimpleNamespace(start=start, end=end))
-    pygame.draw.rect(state.background.image, constants.BLACK, prev_rect.move(*state.resolution))
+    road = SimpleNamespace(start=start, end=end, rect=prev_rect, draw=None)
+
+    road.draw = lambda: (
+        pygame.draw.rect(state.background.image, constants.BLACK, road.rect.move(*state.resolution))
+    )
+    road.draw()
+
+    state.roads.append(road)
     end = None
 
 
