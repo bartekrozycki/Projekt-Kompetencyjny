@@ -37,14 +37,13 @@ if __name__ == '__main__':
         for x in state.roads:
             x.draw()
 
+        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
         state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
-        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
         for x in state.buttons:
-            x.draw()
+            x.render()
 
         pygame.display.update()
-
 
     window_events = {
         pygame.MOUSEMOTION: mouse_motion,
