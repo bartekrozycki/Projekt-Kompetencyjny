@@ -34,14 +34,10 @@ if __name__ == '__main__':
     def video_resize(event: Event):
         state.resolution = event.size
         state.background = logic.create_background(*state.background.rect.topleft) # create background
-        for x in state.roads:
-            x.draw()
+        state.bg_menu = logic.create_menu()
 
-        pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
+        state.window.blit(state.bg_menu.image, (0, 0))
         state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
-
-        for x in state.buttons:
-            x.render()
 
         pygame.display.update()
 

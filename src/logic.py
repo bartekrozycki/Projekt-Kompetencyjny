@@ -14,6 +14,9 @@ def create_background(x, y, color=constants.SKY_BLUE):
 
     background.image.fill(color)
 
+    for x in state.roads:
+        x.draw(background.image)
+
     return background
 
 
@@ -22,14 +25,28 @@ def background_display_rectangle(x, y):
     return pygame.rect.Rect(res_w + x, res_h + y, res_w - state.menu.width, res_h)
 
 
+def create_menu():
+    res_w, res_h = state.resolution
+
+    menu = pygame.sprite.Sprite()
+    menu.rect = pygame.Rect(0, 0, state.menu.width, state.resolution[1])
+    menu.image = pygame.Surface(menu.rect.size)
+
+    menu.image.fill(constants.BLACK)
+
+    for x in state.buttons:
+        x.render(menu.image)
+
+    return menu
+
 def create_button(function, text=""):
     button = SimpleNamespace(render=None, rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20),
                              use=function, text=text)
     text_render = state.font_consolas.render(text, False, constants.BLACK)
 
-    button.render = lambda : (
-        pygame.draw.rect(state.window, constants.WHITE, button.rect),
-        state.window.blit(text_render, button.rect.move(button.rect.w//2 - text_render.get_rect().w//2,3))
+    button.render = lambda surface=state.window: (
+        pygame.draw.rect(surface, constants.WHITE, button.rect),
+        pygame.Surface.blit(surface, text_render, button.rect.move(button.rect.w//2 - text_render.get_rect().w//2,3))
     )
     button.render()
 

@@ -25,8 +25,8 @@ def board_mouse_button_up(event: pygame.event.Event):
 
     road = SimpleNamespace(start=start, end=end, rect=prev_rect, draw=None)
 
-    road.draw = lambda: (
-        pygame.draw.rect(state.background.image, constants.BLACK, road.rect.move(*state.resolution))
+    road.draw = lambda surface=state.background.image: (
+        pygame.draw.rect(surface, constants.BLACK, road.rect.move(*state.resolution))
     )
     road.draw()
 

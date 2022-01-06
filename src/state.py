@@ -12,6 +12,7 @@ resolution = None
 window = None
 
 background: pygame.sprite.Sprite
+bg_menu: pygame.sprite.Sprite
 
 roads = []
 
