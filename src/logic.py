@@ -23,11 +23,16 @@ def background_display_rectangle(x, y):
 
 
 def create_button(function, text=""):
-    button = SimpleNamespace(rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20),
+    button = SimpleNamespace(render=None, rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20),
                              use=function, text=text)
-    pygame.draw.rect(state.window, constants.WHITE, button.rect)
     text_render = state.font_consolas.render(text, False, constants.BLACK)
-    state.window.blit(text_render, button.rect.move(3, 3))
+
+    def update():
+        pygame.draw.rect(state.window, constants.WHITE, button.rect)
+        state.window.blit(text_render, button.rect)
+
+    button.render = update
+    update()
     state.buttons.append(button)
 
 
