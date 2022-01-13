@@ -32,6 +32,7 @@ def board_mouse_button_up(event: pygame.event.Event):
 
     state.roads.append(road)
     end = None
+    prev_rect = pygame.Rect(0, 0, 0, 0)
 
 
 def board_mouse_button_down(event: pygame.event.Event):

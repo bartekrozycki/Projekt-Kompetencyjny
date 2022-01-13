@@ -5,7 +5,7 @@ import pygame
 from src import constants, state
 
 
-def create_background(x, y, color=constants.SKY_BLUE):
+def recreate_background(x, y, color=constants.SKY_BLUE):
     res_w, res_h = state.resolution
 
     background = pygame.sprite.Sprite()
@@ -25,11 +25,11 @@ def background_display_rectangle(x, y):
     return pygame.rect.Rect(res_w + x, res_h + y, res_w - state.menu.width, res_h)
 
 
-def create_menu():
+def recreate_menu():
     res_w, res_h = state.resolution
 
     menu = pygame.sprite.Sprite()
-    menu.rect = pygame.Rect(0, 0, state.menu.width, state.resolution[1])
+    menu.rect = pygame.Rect(0, 0, state.menu.width, res_h)
     menu.image = pygame.Surface(menu.rect.size)
 
     menu.image.fill(constants.BLACK)

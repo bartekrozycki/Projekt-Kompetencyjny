@@ -12,7 +12,7 @@ if __name__ == '__main__':
     res_w, res_h = state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
     state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
 
-    state.background = logic.create_background(-res_w, -res_h)
+    state.background = logic.recreate_background(-res_w, -res_h)
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
@@ -33,8 +33,8 @@ if __name__ == '__main__':
 
     def video_resize(event: Event):
         state.resolution = event.size
-        state.background = logic.create_background(*state.background.rect.topleft) # create background
-        state.bg_menu = logic.create_menu()
+        state.background = logic.recreate_background(*state.background.rect.topleft) # create background
+        state.bg_menu = logic.recreate_menu()
 
         state.window.blit(state.bg_menu.image, (0, 0))
         state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
