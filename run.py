@@ -3,8 +3,8 @@ from types import SimpleNamespace
 import pygame
 
 from src import state, logic, constants
-from src.state import drawing
-from src.ui_logic import menu, draw, window
+from src.state import drawing, selecting
+from src.ui_logic import menu, draw, window, select
 
 if __name__ == '__main__':
     pygame.font.init()
@@ -40,6 +40,8 @@ if __name__ == '__main__':
                 menu(event)
             elif drawing.on:
                 draw(event)
+            elif selecting.on:
+                select(event)
 
         state.clock.tick(3000)
 

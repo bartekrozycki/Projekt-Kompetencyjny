@@ -18,7 +18,7 @@ visible_roads: list[pygame.Rect] = []
 
 clock = pygame.time.Clock()
 
-selecting = SimpleNamespace(on=True)
+selecting = SimpleNamespace(on=True, prev=pygame.Rect(0, 0, 0, 0))
 drawing = SimpleNamespace(on=False, start=None, prev=pygame.Rect(0, 0, 0, 0))
 
 modes = [drawing, selecting]

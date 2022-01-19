@@ -1,7 +1,7 @@
 import pygame
 
-from src import state, constants, logic
-from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK
+from src import state, logic
+from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED
 from src.state import drawing
 
 
@@ -24,7 +24,7 @@ def window(event: pygame.event.Event):
         if pos[0] > state.menu.width and coor != prev_coor:
             cursor_rect = pygame.Rect(pos[0] - pos[0] % 10, pos[1] - pos[1] % 10, CELL_SIZE, CELL_SIZE)
 
-            pygame.draw.rect(state.window, constants.WHITE, cursor_rect, 1)
+            pygame.draw.rect(state.window, WHITE, cursor_rect, 1)
             pygame.display.update(cursor_rect)
             state.cursor.prev = cursor_rect
         # move and display
@@ -83,7 +83,7 @@ def menu(event: pygame.event.Event):
                 if state.highlighted_button_index != -1:
                     logic.render_button(state.highlighted_button_index)
 
-                logic.render_button(i, constants.GREEN)
+                logic.render_button(i, GREEN)
                 state.highlighted_button_index = i
 
                 pygame.display.update()
@@ -130,7 +130,7 @@ def draw(event: pygame.event.Event):
         def button_left():
             x, y = drawing.start = state.coordinates
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            pygame.draw.rect(state.window, constants.WHITE, rect)
+            pygame.draw.rect(state.window, WHITE, rect)
             pygame.display.update(rect)
 
         locals()[BUTTON_NAMES[event.button]]()
@@ -145,10 +145,10 @@ def draw(event: pygame.event.Event):
             x, y = state.offset
             rect = logic.create_road(drawing.start, state.coordinates)
 
-            color = constants.WHITE
+            color = WHITE
             for road in state.visible_roads:
                 if road.colliderect(rect):
-                    color = constants.RED
+                    color = RED
                     break
 
             rect = rect.move(-x, -y)
@@ -157,6 +157,36 @@ def draw(event: pygame.event.Event):
             pygame.display.update(rect)
 
             drawing.prev = rect
+
+    try:
+        locals()[EVENT_NAMES[event.type]]()
+    except KeyError:
+        pass
+
+
+def select(event: pygame.event.Event):
+    def mouse_motion():
+        if state.selecting.prev.collidepoint(*event.pos):
+            pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
+            pygame.display.update(state.selecting.prev)
+            return
+
+        prev_rect = state.selecting.prev
+
+        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
+        pygame.display.update(prev_rect)
+
+        state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
+
+        for road in state.visible_roads:
+            if road.collidepoint(*event.pos):
+                x, y = state.offset
+                pygame.draw.rect(state.window, WHITE, road.move(-x, -y), 1)
+                pygame.display.update(road.move(-x, -y))
+
+                state.selecting.prev = road.move(-x, -y)
+
+                break
 
     try:
         locals()[EVENT_NAMES[event.type]]()
