@@ -4,9 +4,10 @@ import pygame
 
 fps_limit = 60
 
-cell = SimpleNamespace(min=4, max=64, size=8)
 menu = SimpleNamespace(width=100)
+
 buttons = []
+highlighted_button_index = 0
 
 resolution = None
 window = None
@@ -14,13 +15,23 @@ window = None
 background: pygame.sprite.Sprite
 bg_menu: pygame.sprite.Sprite
 
-roads = []
+roads: list[pygame.Rect] = []
+visible_roads: list[pygame.Rect] = []
 
 clock = pygame.time.Clock()
 
-drawing = False
+selecting = SimpleNamespace(on=True)
+drawing = SimpleNamespace(on=False, start_point=None, prev_rect=None)
+moving = SimpleNamespace(on=True)
+
+modes = [drawing, selecting]
 
 mouse_pos = SimpleNamespace(x=0, y=0)
-coordinates = SimpleNamespace(x=0, y=0)
+coordinates = [0, 0]
+offset = [0, 0]
+
+prev_coordinates = (0, 0)
 
 font_consolas = None
+
+prev_cursor_rect = None

@@ -1,8 +1,8 @@
-from types import SimpleNamespace
-
 import pygame
 
 from src import constants, state
+from src.constants import CELL_SIZE, BLACK
+from src.state import drawing, modes, selecting
 
 
 def recreate_background(x, y, color=constants.SKY_BLUE):
@@ -14,8 +14,12 @@ def recreate_background(x, y, color=constants.SKY_BLUE):
 
     background.image.fill(color)
 
-    for x in state.roads:
-        x.draw(background.image)
+    state.visible_roads = []
+
+    for road in state.roads:
+        if road.colliderect(background.rect):
+            state.visible_roads.append(road)
+            pygame.draw.rect(background.image, BLACK, road.move(res_w, res_h))
 
     return background
 
@@ -34,49 +38,75 @@ def recreate_menu():
 
     menu.image.fill(constants.BLACK)
 
-    for x in state.buttons:
-        x.render(menu.image)
+    render_buttons()
 
     return menu
 
-def create_button(function, text=""):
-    button = SimpleNamespace(render=None, rect=pygame.rect.Rect(5, 5 + len(state.buttons) * 30, state.menu.width - 10, 20),
-                             use=function, text=text)
-    text_render = state.font_consolas.render(text, False, constants.BLACK)
 
-    button.render = lambda surface=state.window: (
-        pygame.draw.rect(surface, constants.WHITE, button.rect),
-        pygame.Surface.blit(surface, text_render, button.rect.move(button.rect.w//2 - text_render.get_rect().w//2,3))
-    )
-    button.render()
-
-    state.buttons.append(button)
+def button_select():
+    for mode in modes:
+        mode.on = False
+    selecting.on = True
 
 
-def mode_cursor():
-    state.drawing = False
+def button_draw():
+    for mode in modes:
+        mode.on = False
+    drawing.on = True
 
 
-def mode_draw_single():
-    state.drawing = True
+def render_button(index, color=constants.WHITE):
+    button = state.buttons[index]
+    rect = pygame.rect.Rect(5, 5 + index * 30, state.menu.width - 10, 20)
+    text_render = state.font_consolas.render(button.text, False, constants.BLACK)
+    pygame.draw.rect(state.window, color, rect),
+    pygame.Surface.blit(state.window, text_render, rect.move(rect.w // 2 - text_render.get_rect().w // 2, 3))
+
+
+def render_buttons():
+    for i in range(len(state.buttons)):
+        render_button(i)
+
+    if state.highlighted_button_index < len(state.buttons):
+        render_button(state.highlighted_button_index, constants.GREEN)
 
 
 def create_ver_hor_rectangle(start, end, thickness):
-    diff_x = abs(end.x - start.x)
-    diff_y = abs(end.y - start.y)
+    x1, y1 = start
+    x2, y2 = end
+
+    diff_x = abs(x2 - x1)
+    diff_y = abs(y2 - y1)
+
     if diff_x > diff_y:
-        rect = pygame.Rect(start.x * thickness, start.y * thickness, thickness * diff_x,
+        rect = pygame.Rect(x1 * thickness, y1 * thickness, thickness * (diff_x + 1),
                            thickness)
-        if start.x > end.x:
+        if x1 > x2:
             rect = rect.move(-diff_x * thickness, 0)
-        else:
-            rect.width += thickness
     else:
-        rect = pygame.Rect(start.x * thickness, start.y * thickness, thickness,
-                           thickness * diff_y)
-        if start.y > end.y:
+        rect = pygame.Rect(x1 * thickness, y1 * thickness, thickness, thickness * (diff_y + 1))
+        if y1 > y2:
             rect = rect.move(0, -diff_y * thickness)
-        else:
-            rect.height += thickness
 
     return rect
+
+
+def render_cursor():
+    x, y = state.coordinates
+    size = CELL_SIZE
+    cursor_rect = pygame.Rect(x * size, y * size, size, size)
+
+    prev_cursor_rect = state.prev_cursor_rect
+
+    res_x, res_y = state.resolution
+    left, top = state.background.rect.topleft
+
+    if prev_cursor_rect:
+        state.window.blit(state.background.image, prev_cursor_rect,
+                          area=prev_cursor_rect.move(left + 2 * res_x, top + 2 * res_y))
+        pygame.display.update(prev_cursor_rect)
+
+    state.prev_cursor_rect = cursor_rect
+
+    pygame.draw.rect(state.window, constants.WHITE, cursor_rect, 1)
+    pygame.display.update(cursor_rect)

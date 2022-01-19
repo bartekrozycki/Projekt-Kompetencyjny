@@ -1,7 +1,10 @@
-import pygame
-from pygame.event import Event
+from types import SimpleNamespace
 
-from src import state, logic, ui, constants
+import pygame
+
+from src import state, logic, constants
+from src.state import drawing
+from src.ui_logic import menu, draw, window
 
 if __name__ == '__main__':
     pygame.font.init()
@@ -17,48 +20,26 @@ if __name__ == '__main__':
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
-    logic.create_button(logic.mode_cursor, "nothing")
-    logic.create_button(logic.mode_draw_single, "draw road")
+    state.buttons.extend([SimpleNamespace(use=logic.button_select, text="Select"),
+                          SimpleNamespace(use=logic.button_draw, text="Draw")])
+    logic.render_buttons()
 
     pygame.display.update()
-
-
-    def mouse_motion(event: Event):
-        state.mouse_pos.x = event.pos[0]
-        state.mouse_pos.y = event.pos[1]
-
-        state.coordinates.x = event.pos[0] // state.cell.size
-        state.coordinates.y = event.pos[1] // state.cell.size
-
-
-    def video_resize(event: Event):
-        state.resolution = event.size
-        state.background = logic.recreate_background(*state.background.rect.topleft) # create background
-        state.bg_menu = logic.recreate_menu()
-
-        state.window.blit(state.bg_menu.image, (0, 0))
-        state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
-
-        pygame.display.update()
-
-    window_events = {
-        pygame.MOUSEMOTION: mouse_motion,
-        pygame.VIDEORESIZE: video_resize,
-    }
 
     running = True
     while running:
         events = pygame.event.get()
-        for e in events:
-            if e.type == pygame.QUIT:
+        for event in events:
+            if event.type == pygame.QUIT:
                 running = False
                 break
 
-            try:
-                window_events[e.type](e)
-            except KeyError:
-                pass
-            ui.handle_event(e)
+            window(event)
+
+            if state.mouse_pos.x <= state.menu.width:
+                menu(event)
+            elif drawing.on:
+                draw(event)
 
         state.clock.tick(state.fps_limit)
 
