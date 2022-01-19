@@ -5,21 +5,25 @@ from src.constants import CELL_SIZE, BLACK
 from src.state import drawing, modes, selecting
 
 
-def recreate_background(x, y, color=constants.SKY_BLUE):
-    res_w, res_h = state.resolution
+def recreate_background():
+    w, h = state.resolution
+    x, y = state.offset
 
     background = pygame.sprite.Sprite()
-    background.rect = pygame.Rect(x, y, res_w * 3, res_h * 3)
+    background.rect = pygame.Rect(0, 0, w * 3, h * 3)
     background.image = pygame.Surface(background.rect.size)
 
-    background.image.fill(color)
+    background.image.fill(constants.SKY_BLUE)
 
     state.visible_roads = []
 
+    background_pos = background.rect.move(x, y)
+
     for road in state.roads:
-        if road.colliderect(background.rect):
+        if road.colliderect(background_pos):
+            print(road, road.move(w - x, h - y))
             state.visible_roads.append(road)
-            pygame.draw.rect(background.image, BLACK, road.move(res_w, res_h))
+            pygame.draw.rect(background.image, BLACK, road.move(w - x, h - y))
 
     return background
 
@@ -71,7 +75,7 @@ def render_buttons():
         render_button(state.highlighted_button_index, constants.GREEN)
 
 
-def create_ver_hor_rectangle(start, end, thickness):
+def create_road(start, end):
     x1, y1 = start
     x2, y2 = end
 
@@ -79,34 +83,15 @@ def create_ver_hor_rectangle(start, end, thickness):
     diff_y = abs(y2 - y1)
 
     if diff_x > diff_y:
-        rect = pygame.Rect(x1 * thickness, y1 * thickness, thickness * (diff_x + 1),
-                           thickness)
+        rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE * (diff_x + 1),
+                           CELL_SIZE)
         if x1 > x2:
-            rect = rect.move(-diff_x * thickness, 0)
+            rect = rect.move(-diff_x * CELL_SIZE, 0)
     else:
-        rect = pygame.Rect(x1 * thickness, y1 * thickness, thickness, thickness * (diff_y + 1))
+        rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE, CELL_SIZE * (diff_y + 1))
         if y1 > y2:
-            rect = rect.move(0, -diff_y * thickness)
+            rect = rect.move(0, -diff_y * CELL_SIZE)
 
-    return rect
+    x, y = state.offset
 
-
-def render_cursor():
-    x, y = state.coordinates
-    size = CELL_SIZE
-    cursor_rect = pygame.Rect(x * size, y * size, size, size)
-
-    prev_cursor_rect = state.prev_cursor_rect
-
-    res_x, res_y = state.resolution
-    left, top = state.background.rect.topleft
-
-    if prev_cursor_rect:
-        state.window.blit(state.background.image, prev_cursor_rect,
-                          area=prev_cursor_rect.move(left + 2 * res_x, top + 2 * res_y))
-        pygame.display.update(prev_cursor_rect)
-
-    state.prev_cursor_rect = cursor_rect
-
-    pygame.draw.rect(state.window, constants.WHITE, cursor_rect, 1)
-    pygame.display.update(cursor_rect)
+    return rect.move(x - x % 10, y - y % 10)

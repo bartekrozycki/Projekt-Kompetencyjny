@@ -6,6 +6,8 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+
+MENU_W = 100
 CELL_SIZE = 10
 
 EVENT_NAMES = {
