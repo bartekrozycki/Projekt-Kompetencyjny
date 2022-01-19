@@ -10,7 +10,7 @@ def recreate_background():
     x, y = state.offset
 
     background = pygame.sprite.Sprite()
-    background.rect = pygame.Rect(0, 0, w * 3, h * 3)
+    background.rect = pygame.Rect(-w, -h, w * 3, h * 3)
     background.image = pygame.Surface(background.rect.size)
 
     background.image.fill(constants.SKY_BLUE)
@@ -21,7 +21,6 @@ def recreate_background():
 
     for road in state.roads:
         if road.colliderect(background_pos):
-            print(road, road.move(w - x, h - y))
             state.visible_roads.append(road)
             pygame.draw.rect(background.image, BLACK, road.move(w - x, h - y))
 
