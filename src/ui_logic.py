@@ -21,7 +21,7 @@ def window(event: pygame.event.Event):
                 pygame.display.update(prev_rect)
                 state.cursor.prev = None
         # draw cursor
-        if pos[0] > state.menu.width and coor != prev_coor:
+        if pos[0] > state.menu.width and coor != prev_coor and not state.moving.on:
             cursor_rect = pygame.Rect(pos[0] - pos[0] % 10, pos[1] - pos[1] % 10, CELL_SIZE, CELL_SIZE)
 
             pygame.draw.rect(state.window, WHITE, cursor_rect, 1)
@@ -182,7 +182,10 @@ def select(event: pygame.event.Event):
         def button_left():
             for v_road in state.visible_roads:
                 if v_road.rect.collidepoint(x + ox, y + oy):
-                    pygame.draw.rect(state.window, YELLOW, v_road.rect.move(-ox, -oy), 1)
+                    pygame.draw.rect(state.window, YELLOW, v_road.rect.move(-ox, -oy))
+                    for s_road in state.selected_roads:
+                        pygame.draw.rect(state.window, YELLOW, s_road.rect.move(-ox, -oy))
+                        pygame.display.update(s_road.rect.move(-ox, -oy))
                     pygame.draw.rect(state.background.image, YELLOW, v_road.rect.move(w - ox, h - oy), 1)
                     pygame.display.update(v_road.rect.move(-ox, -oy))
 
@@ -200,9 +203,16 @@ def select(event: pygame.event.Event):
 
     def mouse_motion():
 
-        for road in state.selected_roads:
-            if road.rect.collidepoint(x, y):
+        for s_road in state.selected_roads:
+            if s_road.rect.collidepoint(x, y):
+                for road in state.selected_roads:
+                    pygame.draw.rect(state.window, YELLOW, road.rect.move(-ox, -oy))
+                    pygame.display.update(road.rect.move(-ox, -oy))
                 return
+
+        for s_road in state.selected_roads:
+            state.window.blit(state.background.image, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
+            pygame.display.update(s_road.rect.move(-ox, -oy))
 
         if state.selecting.prev.collidepoint(x, y):
             pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
