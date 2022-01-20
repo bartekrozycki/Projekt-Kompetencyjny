@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pygame
 
 from src import constants, state
@@ -93,4 +95,4 @@ def create_road(start, end):
 
     x, y = state.offset
 
-    return rect.move(x - x % 10, y - y % 10)
+    return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[])
