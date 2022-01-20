@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pygame
 
 from src import state, logic
@@ -111,7 +113,10 @@ def draw(event: pygame.event.Event):
                     drawing.start = None
                     return
 
-            state.roads.append(road)
+            state.roads.append(
+                SimpleNamespace(startPoint=drawing.start, endPoint=state.coordinates, rect=road)
+            )
+
             state.visible_roads.append(road)
 
             x, y = state.offset

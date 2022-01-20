@@ -33,9 +33,7 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
                 break
-
             window(event)
-
             if pygame.mouse.get_pos()[0] <= state.menu.width:
                 menu(event)
             elif drawing.on:
@@ -44,5 +42,8 @@ if __name__ == '__main__':
                 select(event)
 
         state.clock.tick(3000)
+
+    # saving state
+
 
     pygame.quit()

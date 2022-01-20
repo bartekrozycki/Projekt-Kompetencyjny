@@ -20,9 +20,9 @@ def recreate_background():
     background_pos = background.rect.move(x, y)
 
     for road in state.roads:
-        if road.colliderect(background_pos):
-            state.visible_roads.append(road)
-            pygame.draw.rect(background.image, BLACK, road.move(w - x, h - y))
+        if road.rect.colliderect(background_pos):
+            state.visible_roads.append(road.rect)
+            pygame.draw.rect(background.image, BLACK, road.rect.move(w - x, h - y))
 
     return background
 
