@@ -13,8 +13,8 @@ window = None
 background: pygame.sprite.Sprite
 bg_menu: pygame.sprite.Sprite
 
-roads: list[SimpleNamespace(startPoint=None, endPoint=None, rect=None)] = []
-visible_roads: list[pygame.Rect] = []
+roads: list[SimpleNamespace(start=None, end=None, rect=None)] = []
+visible_roads: list[SimpleNamespace(start=None, end=None, rect=None)] = []
 
 clock = pygame.time.Clock()
 

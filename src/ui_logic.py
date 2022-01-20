@@ -105,21 +105,20 @@ def draw(event: pygame.event.Event):
 
             road = logic.create_road(drawing.start, state.coordinates)
 
+            x, y = state.offset
+
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
-                    state.window.blit(state.background.image, road.rect, road.rect.move(w, h))
-                    pygame.display.update(road.rect)
+                    state.window.blit(state.background.image, road.rect.move(-x, -y), road.rect.move(w - x, h - y))
+                    pygame.display.update(road.rect.move(-x, -y))
                     drawing.prev = pygame.Rect(0, 0, 0, 0)
                     drawing.start = None
                     return
 
-            state.roads.append(
-                SimpleNamespace(startPoint=drawing.start, endPoint=state.coordinates, rect=road)
-            )
+            state.roads.append(road)
 
             state.visible_roads.append(road)
 
-            x, y = state.offset
 
             pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - x, h - y))
             pygame.draw.rect(state.window, BLACK, road.rect.move(- x, - y))
