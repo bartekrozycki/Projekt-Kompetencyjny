@@ -23,3 +23,5 @@ BUTTON_NAMES = {
     pygame.BUTTON_WHEELDOWN: "button_wheeldown",
     pygame.BUTTON_RIGHT: "button_right"
 }
+
+ROADS_FILENAME = "roads.data"
