@@ -1,3 +1,4 @@
+import pickle
 from types import SimpleNamespace
 
 import pygame
@@ -6,7 +7,26 @@ from src import state, logic, constants
 from src.state import drawing, selecting
 from src.ui_logic import menu, draw, window, select
 
+
+def saveRoadsToFile():
+    roads_file = open(constants.ROADS_FILENAME, 'wb')
+    pickle.dump(state.roads, roads_file)
+    roads_file.close()
+
+
+def readRoadsFromFile():
+    try:
+        roads_file = open(constants.ROADS_FILENAME, 'rb')
+        state.roads = pickle.load(roads_file)
+        roads_file.close()
+    except EOFError:
+        print("Empty file")
+    except FileNotFoundError:
+        print("Not found any roads file")
+
+
 if __name__ == '__main__':
+    readRoadsFromFile()
     pygame.font.init()
     state.font_consolas = pygame.font.SysFont('Consolas', 15)
 
@@ -42,8 +62,6 @@ if __name__ == '__main__':
                 select(event)
 
         state.clock.tick(3000)
-
-    # saving state
-
+    saveRoadsToFile()
 
     pygame.quit()
