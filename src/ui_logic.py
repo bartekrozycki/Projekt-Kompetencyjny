@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 import pygame
 
 from src import state, logic
@@ -91,7 +89,6 @@ def menu(event: pygame.event.Event):
                 if clicked_button.activable:
                     logic.render_button(i, GREEN)
 
-
                 pygame.display.update()
 
                 break
@@ -122,7 +119,6 @@ def draw(event: pygame.event.Event):
             state.roads.append(road)
 
             state.visible_roads.append(road)
-
 
             pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - x, h - y))
             pygame.draw.rect(state.window, BLACK, road.rect.move(- x, - y))

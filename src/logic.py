@@ -102,7 +102,7 @@ def create_road(start, end):
 def button_clear_workspace():
     import pickle
     state.roads = []
-    ## update workspace
+    # update workspace
     state.background = recreate_background()  # create background
     res_w, res_h = state.resolution
     state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
@@ -113,12 +113,14 @@ def button_clear_workspace():
     pickle.dump(state.roads, roads_file)
     roads_file.close()
 
-def saveRoadsToFile():
+
+def save():
     roads_file = open(constants.ROADS_FILENAME, 'wb')
     pickle.dump(state.roads, roads_file)
     roads_file.close()
 
-def readRoadsFromFile():
+
+def load():
     try:
         roads_file = open(constants.ROADS_FILENAME, 'rb')
         state.roads = pickle.load(roads_file)

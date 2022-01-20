@@ -1,4 +1,3 @@
-import pickle
 from types import SimpleNamespace
 
 import pygame
@@ -7,12 +6,8 @@ from src import state, logic, constants
 from src.state import drawing, selecting
 from src.ui_logic import menu, draw, window, select
 
-
-
-
-
 if __name__ == '__main__':
-    logic.readRoadsFromFile()
+    logic.load()
     pygame.font.init()
     state.font_consolas = pygame.font.SysFont('Consolas', 15)
 
@@ -24,7 +19,8 @@ if __name__ == '__main__':
     state.background = logic.recreate_background()
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
-    state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(state.menu.width, 0))
+    state.window.blit(state.background.image, (state.menu.width, 0),
+                      area=logic.background_display_rectangle(state.menu.width, 0))
 
     state.buttons.extend([SimpleNamespace(use=logic.button_select, text="Select", activable=True),
                           SimpleNamespace(use=logic.button_draw, text="Draw", activable=True),
@@ -49,6 +45,6 @@ if __name__ == '__main__':
                 select(event)
 
         state.clock.tick(60)
-    logic.saveRoadsToFile()
+    logic.save()
 
     pygame.quit()
