@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pygame
 
 from src import constants, state
@@ -21,7 +23,7 @@ def recreate_background():
 
     for road in state.roads:
         if road.rect.colliderect(background_pos):
-            state.visible_roads.append(road.rect)
+            state.visible_roads.append(road)
             pygame.draw.rect(background.image, BLACK, road.rect.move(w - x, h - y))
 
     return background
@@ -93,4 +95,4 @@ def create_road(start, end):
 
     x, y = state.offset
 
-    return rect.move(x - x % 10, y - y % 10)
+    return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[])

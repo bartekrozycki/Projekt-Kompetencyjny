@@ -105,26 +105,25 @@ def draw(event: pygame.event.Event):
 
             road = logic.create_road(drawing.start, state.coordinates)
 
-            for rect in state.visible_roads:
-                if road.colliderect(rect):
-                    state.window.blit(state.background.image, road, road.move(w, h))
-                    pygame.display.update(road)
+            x, y = state.offset
+
+            for v_road in state.visible_roads:
+                if road.rect.colliderect(v_road.rect):
+                    state.window.blit(state.background.image, road.rect.move(-x, -y), road.rect.move(w - x, h - y))
+                    pygame.display.update(road.rect.move(-x, -y))
                     drawing.prev = pygame.Rect(0, 0, 0, 0)
                     drawing.start = None
                     return
 
-            state.roads.append(
-                SimpleNamespace(startPoint=drawing.start, endPoint=state.coordinates, rect=road)
-            )
+            state.roads.append(road)
 
             state.visible_roads.append(road)
 
-            x, y = state.offset
 
-            pygame.draw.rect(state.background.image, BLACK, road.move(w - x, h - y))
-            pygame.draw.rect(state.window, BLACK, road.move(- x, - y))
+            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - x, h - y))
+            pygame.draw.rect(state.window, BLACK, road.rect.move(- x, - y))
 
-            pygame.display.update(road.move(- x, - y))
+            pygame.display.update(road.rect.move(- x, - y))
 
             drawing.prev = pygame.Rect(0, 0, 0, 0)
             drawing.start = None
@@ -148,20 +147,20 @@ def draw(event: pygame.event.Event):
             pygame.display.update(prev)
 
             x, y = state.offset
-            rect = logic.create_road(drawing.start, state.coordinates)
+            road = logic.create_road(drawing.start, state.coordinates)
 
             color = WHITE
-            for road in state.visible_roads:
-                if road.colliderect(rect):
+            for v_road in state.visible_roads:
+                if v_road.rect.colliderect(road.rect):
                     color = RED
                     break
 
-            rect = rect.move(-x, -y)
+            road.rect = road.rect.move(-x, -y)
 
-            pygame.draw.rect(state.window, color, rect)
-            pygame.display.update(rect)
+            pygame.draw.rect(state.window, color, road.rect)
+            pygame.display.update(road.rect)
 
-            drawing.prev = rect
+            drawing.prev = road.rect
 
     try:
         locals()[EVENT_NAMES[event.type]]()
@@ -183,13 +182,15 @@ def select(event: pygame.event.Event):
 
         state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
 
-        for road in state.visible_roads:
-            if road.collidepoint(*event.pos):
-                x, y = state.offset
-                pygame.draw.rect(state.window, WHITE, road.move(-x, -y), 1)
-                pygame.display.update(road.move(-x, -y))
+        ox, oy = state.offset
+        x, y = event.pos
 
-                state.selecting.prev = road.move(-x, -y)
+        for v_road in state.visible_roads:
+            if v_road.rect.collidepoint(x + ox, y + oy):
+                pygame.draw.rect(state.window, WHITE, v_road.rect.move(-ox, -oy), 1)
+                pygame.display.update(v_road.rect.move(-ox, -oy))
+
+                state.selecting.prev = v_road.rect.move(-ox, -oy)
 
                 break
 
