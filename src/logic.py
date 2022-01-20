@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pygame
 
 from src import constants, state
-from src.constants import CELL_SIZE, BLACK
+from src.constants import CELL_SIZE, BLACK, YELLOW
 from src.state import drawing, modes, selecting
 
 
@@ -16,7 +16,7 @@ def recreate_background():
     background.rect = pygame.Rect(-w, -h, w * 3, h * 3)
     background.image = pygame.Surface(background.rect.size)
 
-    background.image.fill(constants.SKY_BLUE)
+    background.image.fill(constants.D_GRAY)
 
     state.visible_roads = []
 
@@ -26,6 +26,10 @@ def recreate_background():
         if road.rect.colliderect(background_pos):
             state.visible_roads.append(road)
             pygame.draw.rect(background.image, BLACK, road.rect.move(w - x, h - y))
+
+    for s_road in state.selected_roads:
+        if s_road.rect.colliderect(background_pos):
+            pygame.draw.rect(background.image, YELLOW, s_road.rect.move(w - x, h - y), 1)
 
     return background
 

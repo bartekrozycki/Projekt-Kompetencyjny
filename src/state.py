@@ -21,6 +21,7 @@ clock = pygame.time.Clock()
 
 selecting = SimpleNamespace(on=True, prev=pygame.Rect(0, 0, 0, 0))
 drawing = SimpleNamespace(on=False, start=None, prev=pygame.Rect(0, 0, 0, 0))
+moving = SimpleNamespace(on=False)
 
 modes = [drawing, selecting]
 
