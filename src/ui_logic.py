@@ -106,12 +106,12 @@ def menu(event: pygame.event.Event):
 def draw(event: pygame.event.Event):
     def mouse_button_up():
         def button_left():
+            x, y = state.offset
             w, h = state.resolution
 
             road = logic.create_road(drawing.start, state.coordinates)
 
-            x, y = state.offset
-
+            # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
                     state.window.blit(state.background.image, road.rect.move(-x, -y), road.rect.move(w - x, h - y))
@@ -121,14 +121,14 @@ def draw(event: pygame.event.Event):
                     return
 
             state.roads.append(road)
-
             state.visible_roads.append(road)
 
+            # draw road with actual map position offset and update this part of screen
             pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - x, h - y))
             pygame.draw.rect(state.window, BLACK, road.rect.move(- x, - y))
-
             pygame.display.update(road.rect.move(- x, - y))
 
+            # clear variables used in process
             drawing.prev = pygame.Rect(0, 0, 0, 0)
             drawing.start = None
 
