@@ -80,13 +80,17 @@ def menu(event: pygame.event.Event):
         for i, button in enumerate(state.buttons):
             rect = pygame.rect.Rect(CELL_SIZE / 2, CELL_SIZE / 2 + i * 30, state.menu.width - 10, 20)
             if rect.collidepoint(*pos):
-                button.use()
+                clicked_button = button
 
-                if state.highlighted_button_index != -1:
+                clicked_button.use()
+
+                if state.highlighted_button_index != -1 and clicked_button.activable:
                     logic.render_button(state.highlighted_button_index)
+                    state.highlighted_button_index = i
 
-                logic.render_button(i, GREEN)
-                state.highlighted_button_index = i
+                if clicked_button.activable:
+                    logic.render_button(i, GREEN)
+
 
                 pygame.display.update()
 

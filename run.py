@@ -40,8 +40,9 @@ if __name__ == '__main__':
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
 
-    state.buttons.extend([SimpleNamespace(use=logic.button_select, text="Select"),
-                          SimpleNamespace(use=logic.button_draw, text="Draw")])
+    state.buttons.extend([SimpleNamespace(use=logic.button_select, text="Select", activable=True),
+                          SimpleNamespace(use=logic.button_draw, text="Draw", activable=True),
+                          SimpleNamespace(use=logic.button_clear_workspace, text="Clear", activable=False)])
     logic.render_buttons()
 
     pygame.display.update()
@@ -61,7 +62,7 @@ if __name__ == '__main__':
             elif selecting.on:
                 select(event)
 
-        state.clock.tick(3000)
+        state.clock.tick(60)
     saveRoadsToFile()
 
     pygame.quit()

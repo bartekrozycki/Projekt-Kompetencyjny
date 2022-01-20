@@ -96,3 +96,18 @@ def create_road(start, end):
     x, y = state.offset
 
     return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[])
+
+
+def button_clear_workspace():
+    import pickle
+    state.roads = []
+    ## update workspace
+    state.background = recreate_background()  # create background
+    res_w, res_h = state.resolution
+    state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
+    state.bg_menu = recreate_menu()
+    pygame.display.update()
+    ###
+    roads_file = open(constants.ROADS_FILENAME, 'wb')
+    pickle.dump(state.roads, roads_file)
+    roads_file.close()

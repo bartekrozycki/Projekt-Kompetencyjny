@@ -4,7 +4,7 @@ import pygame
 
 menu = SimpleNamespace(width=100)
 
-buttons = []
+buttons: list[SimpleNamespace(use=None, text='default', activable=False)] = []
 highlighted_button_index = 0
 
 resolution = None
