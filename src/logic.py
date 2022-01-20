@@ -1,3 +1,4 @@
+import pickle
 from types import SimpleNamespace
 
 import pygame
@@ -111,3 +112,18 @@ def button_clear_workspace():
     roads_file = open(constants.ROADS_FILENAME, 'wb')
     pickle.dump(state.roads, roads_file)
     roads_file.close()
+
+def saveRoadsToFile():
+    roads_file = open(constants.ROADS_FILENAME, 'wb')
+    pickle.dump(state.roads, roads_file)
+    roads_file.close()
+
+def readRoadsFromFile():
+    try:
+        roads_file = open(constants.ROADS_FILENAME, 'rb')
+        state.roads = pickle.load(roads_file)
+        roads_file.close()
+    except EOFError:
+        print("Empty file")
+    except FileNotFoundError:
+        print("Not found any roads file")

@@ -8,25 +8,11 @@ from src.state import drawing, selecting
 from src.ui_logic import menu, draw, window, select
 
 
-def saveRoadsToFile():
-    roads_file = open(constants.ROADS_FILENAME, 'wb')
-    pickle.dump(state.roads, roads_file)
-    roads_file.close()
 
-
-def readRoadsFromFile():
-    try:
-        roads_file = open(constants.ROADS_FILENAME, 'rb')
-        state.roads = pickle.load(roads_file)
-        roads_file.close()
-    except EOFError:
-        print("Empty file")
-    except FileNotFoundError:
-        print("Not found any roads file")
 
 
 if __name__ == '__main__':
-    readRoadsFromFile()
+    logic.readRoadsFromFile()
     pygame.font.init()
     state.font_consolas = pygame.font.SysFont('Consolas', 15)
 
@@ -38,7 +24,7 @@ if __name__ == '__main__':
     state.background = logic.recreate_background()
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
-    state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(0, 0))
+    state.window.blit(state.background.image, (state.menu.width, 0), area=logic.background_display_rectangle(state.menu.width, 0))
 
     state.buttons.extend([SimpleNamespace(use=logic.button_select, text="Select", activable=True),
                           SimpleNamespace(use=logic.button_draw, text="Draw", activable=True),
@@ -63,6 +49,6 @@ if __name__ == '__main__':
                 select(event)
 
         state.clock.tick(60)
-    saveRoadsToFile()
+    logic.saveRoadsToFile()
 
     pygame.quit()
