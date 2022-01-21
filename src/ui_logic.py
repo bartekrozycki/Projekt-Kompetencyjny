@@ -127,20 +127,36 @@ def draw(event: pygame.event.Event):
                     drawing.start = None
                     return
 
-            print("==========")
-            inflated_horizontal = road.rect.inflate(CELL_SIZE, 0)
-            inflated_vertical = road.rect.inflate(0, CELL_SIZE)
+            inflated_h = road.rect.inflate(CELL_SIZE, 0)
+            inflated_v = road.rect.inflate(0, CELL_SIZE)
+
+            neighbours = []
+            count_h = count_v = 0
 
             for v_road in state.visible_roads:
-                if road.rect.h == CELL_SIZE and v_road.rect.h == CELL_SIZE:
-                    if inflated_horizontal.colliderect(v_road.rect):
-                        # _
-                        pass
-                if road.rect.w == CELL_SIZE and v_road.rect.w == CELL_SIZE:
-                    if inflated_vertical.colliderect(v_road.rect):
-                        # |
-                        pass
+                if road.rect.h == CELL_SIZE and v_road.rect.h == CELL_SIZE and inflated_h.colliderect(v_road.rect):
+                    neighbours.append(v_road)
+                    count_h += 1
 
+                if road.rect.w == CELL_SIZE and v_road.rect.w == CELL_SIZE and inflated_v.colliderect(v_road.rect):
+                    neighbours.append(v_road)
+                    count_v += 1
+
+            for n_road in neighbours:
+                if n_road.rect.top == road.rect.top and n_road.rect.h == CELL_SIZE and count_h >= count_v:
+                    n_road.rect.width += road.rect.width
+                    if n_road.rect.left > road.rect.left:
+                        n_road.rect.left = road.rect.left
+                    road = n_road
+                    state.roads.remove(n_road)
+                    state.visible_roads.remove(n_road)
+                if n_road.rect.left == road.rect.left and n_road.rect.w == CELL_SIZE and count_h < count_v:
+                    n_road.rect.height += road.rect.height
+                    if n_road.rect.top > road.rect.top:
+                        n_road.rect.top = road.rect.top
+                    road = n_road
+                    state.roads.remove(n_road)
+                    state.visible_roads.remove(n_road)
 
             state.roads.append(road)
             state.visible_roads.append(road)
@@ -197,8 +213,6 @@ def draw(event: pygame.event.Event):
                 line = pygame.Rect(width, 0, 1, h)
             else:
                 line = pygame.Rect(0, 0, 0, 0)
-
-            print(road.rect.width)
 
             pygame.draw.rect(state.window, color, road.rect)
             pygame.draw.rect(state.window, color, line)
