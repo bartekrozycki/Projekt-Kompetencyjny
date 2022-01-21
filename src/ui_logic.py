@@ -104,19 +104,25 @@ def menu(event: pygame.event.Event):
 
 
 def draw(event: pygame.event.Event):
+    ox, oy = state.offset
+    w, h = state.resolution
+    x, y = state.mouse_pos
+
     def mouse_button_up():
         def button_left():
-            offset_x, offset_y = state.offset
-            w, h = state.resolution
+
+            p_line = drawing.p_line
+
+            state.window.blit(state.background.image, p_line, area=p_line.move(*state.resolution))
+            pygame.display.update([p_line])
 
             road = logic.create_road(drawing.start, state.coordinates)
 
             # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
-                    state.window.blit(state.background.image, road.rect.move(-offset_x, -offset_y),
-                                      road.rect.move(w - offset_x, h - offset_y))
-                    pygame.display.update(road.rect.move(-offset_x, -offset_y))
+                    state.window.blit(state.background.image, road.rect.move(-ox, -oy), road.rect.move(w - ox, h - oy))
+                    pygame.display.update(road.rect.move(-ox, -oy))
                     drawing.prev = pygame.Rect(0, 0, 0, 0)
                     drawing.start = None
                     return
@@ -140,12 +146,13 @@ def draw(event: pygame.event.Event):
             state.visible_roads.append(road)
 
             # draw road with actual map position offset and update this part of screen
-            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - offset_x, h - offset_y))
-            pygame.draw.rect(state.window, BLACK, road.rect.move(-offset_x, -offset_y))
-            pygame.display.update(road.rect.move(-offset_x, -offset_y))
+            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - ox, h - oy))
+            pygame.draw.rect(state.window, BLACK, road.rect.move(- ox, - oy))
+            pygame.display.update(road.rect.move(- ox, - oy))
 
             # clear variables used in process
             drawing.prev = pygame.Rect(0, 0, 0, 0)
+            drawing.p_line = pygame.Rect(0, 0, 0, 0)
             drawing.start = None
 
         locals()[BUTTON_NAMES[event.button]]()
@@ -162,11 +169,12 @@ def draw(event: pygame.event.Event):
     def mouse_motion():
         if drawing.start and pygame.mouse.get_pressed(3)[0]:
             prev = drawing.prev
+            p_line = drawing.p_line
 
             state.window.blit(state.background.image, prev, area=prev.move(*state.resolution))
-            pygame.display.update(prev)
+            state.window.blit(state.background.image, p_line, area=p_line.move(*state.resolution))
+            pygame.display.update([prev, p_line])
 
-            x, y = state.offset
             road = logic.create_road(drawing.start, state.coordinates)
 
             color = WHITE
@@ -175,12 +183,29 @@ def draw(event: pygame.event.Event):
                     color = RED
                     break
 
-            road.rect = road.rect.move(-x, -y)
+            road.rect = road.rect.move(-ox, -oy)
+
+            if road.rect.height != CELL_SIZE:
+                height = road.rect.top - oy
+                if road.rect.top - oy < y - y % 10:
+                    height += road.rect.height
+                line = pygame.Rect(state.menu.width, height, w - state.menu.width, 1)
+            elif road.rect.width != CELL_SIZE:
+                width = road.rect.left - ox
+                if road.rect.left - ox < x - x % 10:
+                    width += road.rect.width
+                line = pygame.Rect(width, 0, 1, h)
+            else:
+                line = pygame.Rect(0, 0, 0, 0)
+
+            print(road.rect.width)
 
             pygame.draw.rect(state.window, color, road.rect)
-            pygame.display.update(road.rect)
+            pygame.draw.rect(state.window, color, line)
+            pygame.display.update([road.rect, line])
 
             drawing.prev = road.rect
+            drawing.p_line = line
 
     try:
         locals()[EVENT_NAMES[event.type]]()
