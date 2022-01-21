@@ -84,7 +84,6 @@ def render_buttons():
     if state.highlighted_button_index < len(state.buttons):
         render_button(state.highlighted_button_index, constants.GREEN)
 
-
 def create_road(start, end):
     x1, y1 = start
     x2, y2 = end

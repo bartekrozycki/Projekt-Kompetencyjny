@@ -36,6 +36,21 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
                 break
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d:
+                    logic.button_draw()
+                    state.highlighted_button_index = 1
+                    logic.render_buttons()
+                    pygame.display.update()
+                    continue
+                if event.key == pygame.K_s:
+                    logic.button_select()
+                    state.highlighted_button_index = 0
+                    logic.render_buttons()
+                    pygame.display.update()
+                    continue
+
             window(event)
 
             if state.moving.on:
