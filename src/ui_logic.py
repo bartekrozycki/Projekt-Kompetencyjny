@@ -281,6 +281,11 @@ def select(event: pygame.event.Event):
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
+        prev_rect = state.selecting.prev
+
+        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
+        pygame.display.update(prev_rect)
+
         for v_road in state.visible_roads:
             if v_road.rect.collidepoint(x + ox, y + oy):
                 pygame.draw.rect(state.window, WHITE, v_road.rect.move(-ox, -oy), 1)
@@ -326,11 +331,6 @@ def select(event: pygame.event.Event):
             pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
             pygame.display.update(state.selecting.prev)
             return
-
-        prev_rect = state.selecting.prev
-
-        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
-        pygame.display.update(prev_rect)
 
         state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
 
