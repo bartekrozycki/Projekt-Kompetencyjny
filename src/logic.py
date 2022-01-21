@@ -104,9 +104,12 @@ def create_road(start, end):
         if y1 > y2:
             rect = rect.move(0, -diff_y * CELL_SIZE)
 
-    x, y = state.offset
+    ox, oy = state.offset
+    start = [start[0] + ox // CELL_SIZE, start[1] + oy // CELL_SIZE]
+    end = [end[0] + ox // CELL_SIZE, end[1] + oy // CELL_SIZE]
 
-    return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[], start=start, end=end)
+
+    return SimpleNamespace(rect=rect.move(ox, oy), connections=[], start=start, end=end)
 
 
 def button_clear_workspace():
