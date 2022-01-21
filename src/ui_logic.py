@@ -1,8 +1,7 @@
 import pygame
 
 from src import state, logic
-from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED, YELLOW, D_YELLOW, \
-    SKY_BLUE, D_GRAY
+from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED, YELLOW, D_GRAY
 from src.state import drawing
 
 
