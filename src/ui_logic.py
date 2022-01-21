@@ -202,13 +202,13 @@ def draw(event: pygame.event.Event):
             road.rect = road.rect.move(-ox, -oy)
 
             if road.rect.height != CELL_SIZE:
-                height = road.rect.top - oy
-                if road.rect.top - oy < y - y % 10:
+                height = road.rect.top
+                if height < y - y % 10:
                     height += road.rect.height
                 line = pygame.Rect(state.menu.width, height, w - state.menu.width, 1)
             elif road.rect.width != CELL_SIZE:
-                width = road.rect.left - ox
-                if road.rect.left - ox < x - x % 10:
+                width = road.rect.left
+                if width < x - x % 10:
                     width += road.rect.width
                 line = pygame.Rect(width, 0, 1, h)
             else:
