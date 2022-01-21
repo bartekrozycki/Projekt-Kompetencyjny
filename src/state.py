@@ -13,9 +13,9 @@ window = None
 background: pygame.sprite.Sprite
 bg_menu: pygame.sprite.Sprite
 
-roads: list[SimpleNamespace(start=None, end=None, rect=None)] = []
-visible_roads: list[SimpleNamespace(start=None, end=None, rect=None)] = []
-selected_roads: list[SimpleNamespace(start=None, end=None, rect=None)] = []
+roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
+visible_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
+selected_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
 
 clock = pygame.time.Clock()
 
