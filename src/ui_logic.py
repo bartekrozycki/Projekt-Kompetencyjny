@@ -187,10 +187,13 @@ def draw(event: pygame.event.Event):
         for line in drawing.p_lines:
             state.window.blit(state.background.image, line, area=line.move(*state.resolution))
         pygame.display.update(drawing.p_lines)
-        lines = []
 
+        lines = []
         lines.append(pygame.Rect(state.menu.width, cy * CELL_SIZE, w - state.menu.width, 1))
+        lines.append(pygame.Rect(state.menu.width, (cy + 1) * CELL_SIZE - 1, w - state.menu.width, 1))
         lines.append(pygame.Rect(cx * CELL_SIZE, 0, 1, h))
+        lines.append(pygame.Rect((cx + 1) * CELL_SIZE - 1, 0, 1, h))
+
         for line in lines:
             pygame.draw.rect(state.window, L_GRAY, line)
 
