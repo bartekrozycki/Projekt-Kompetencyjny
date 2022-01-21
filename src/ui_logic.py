@@ -255,7 +255,7 @@ def select(event: pygame.event.Event):
 
         def button_right():
             for s_road in state.selected_roads:
-                if s_road.rect.collidepoint(x, y):
+                if s_road.rect.move(-ox, -oy).collidepoint(x, y):
                     for road in state.selected_roads:
                         pygame.draw.rect(state.window, D_GRAY, road.rect.move(-ox, -oy))
                         pygame.draw.rect(state.background.image, D_GRAY, road.rect.move(w - ox, h - oy))
@@ -267,7 +267,7 @@ def select(event: pygame.event.Event):
                     return
 
             for v_road in state.visible_roads:
-                if v_road.rect.collidepoint(x, y):
+                if v_road.rect.move(-ox, -oy).collidepoint(x, y):
                     pygame.draw.rect(state.window, D_GRAY, v_road.rect.move(-ox, -oy))
                     pygame.draw.rect(state.background.image, D_GRAY, v_road.rect.move(w - ox, h - oy))
                     pygame.display.update(v_road.rect.move(-ox, -oy))
