@@ -317,7 +317,7 @@ def select(event: pygame.event.Event):
                 break
 
         for s_road in state.selected_roads:
-            if s_road.rect.collidepoint(x, y):
+            if s_road.rect.collidepoint(x + ox, y + oy):
                 for road in state.selected_roads:
                     pygame.draw.rect(state.window, YELLOW, road.rect.move(-ox, -oy))
                     pygame.display.update(road.rect.move(-ox, -oy))
