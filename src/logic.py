@@ -100,7 +100,10 @@ def create_road(start, end):
 
     x, y = state.offset
 
-    return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[])
+    start = [rect.x // CELL_SIZE, rect.y // CELL_SIZE]
+    end = [(rect.x + rect.w - CELL_SIZE) // CELL_SIZE, (rect.y + rect.h - CELL_SIZE) // CELL_SIZE]
+
+    return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[], start=start, end=end)
 
 
 def button_clear_workspace():
