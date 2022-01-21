@@ -147,6 +147,9 @@ def draw(event: pygame.event.Event):
                     n_road.rect.width += road.rect.width
                     if n_road.rect.left > road.rect.left:
                         n_road.rect.left = road.rect.left
+                        n_road.start = road.start if road.start[0] < road.end[0] else road.end
+                    else:
+                        n_road.end = road.end if road.start[0] < road.end[0] else road.start
                     road = n_road
                     state.roads.remove(n_road)
                     state.visible_roads.remove(n_road)
@@ -154,6 +157,9 @@ def draw(event: pygame.event.Event):
                     n_road.rect.height += road.rect.height
                     if n_road.rect.top > road.rect.top:
                         n_road.rect.top = road.rect.top
+                        n_road.start = road.start if road.start[0] < road.end[0] else road.end
+                    else:
+                        n_road.end = road.end if road.start[0] < road.end[0] else road.start
                     road = n_road
                     state.roads.remove(n_road)
                     state.visible_roads.remove(n_road)
