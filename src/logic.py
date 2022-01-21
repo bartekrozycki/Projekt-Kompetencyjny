@@ -58,6 +58,10 @@ def button_select():
         mode.on = False
     selecting.on = True
 
+    for line in state.drawing.p_lines:
+        state.window.blit(state.background.image, line, area=line.move(*state.resolution))
+    pygame.display.update(drawing.p_lines)
+
 
 def button_draw():
     for mode in modes:

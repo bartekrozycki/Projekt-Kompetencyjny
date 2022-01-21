@@ -1,7 +1,7 @@
 import pygame
 
 from src import state, logic
-from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED, YELLOW, D_GRAY
+from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED, YELLOW, D_GRAY, L_GRAY
 from src.state import drawing
 
 
@@ -24,7 +24,7 @@ def window(event: pygame.event.Event):
         if pos[0] > state.menu.width and coor != prev_coor and not state.moving.on:
             cursor_rect = pygame.Rect(pos[0] - pos[0] % 10, pos[1] - pos[1] % 10, CELL_SIZE, CELL_SIZE)
 
-            pygame.draw.rect(state.window, WHITE, cursor_rect, 1)
+            pygame.draw.rect(state.window, L_GRAY, cursor_rect, 1)
             pygame.display.update(cursor_rect)
             state.cursor.prev = cursor_rect
         # move and display
@@ -107,15 +107,10 @@ def draw(event: pygame.event.Event):
     ox, oy = state.offset
     w, h = state.resolution
     x, y = state.mouse_pos
+    cx, cy = state.coordinates
 
     def mouse_button_up():
         def button_left():
-
-            p_line = drawing.p_line
-
-            state.window.blit(state.background.image, p_line, area=p_line.move(*state.resolution))
-            pygame.display.update([p_line])
-
             road = logic.create_road(drawing.start, state.coordinates)
 
             # check if new road collide with existing visible roads and remove it
@@ -189,13 +184,25 @@ def draw(event: pygame.event.Event):
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
+        for line in drawing.p_lines:
+            state.window.blit(state.background.image, line, area=line.move(*state.resolution))
+        pygame.display.update(drawing.p_lines)
+        lines = []
+
+        lines.append(pygame.Rect(state.menu.width, cy * CELL_SIZE, w - state.menu.width, 1))
+        lines.append(pygame.Rect(cx * CELL_SIZE, 0, 1, h))
+        for line in lines:
+            pygame.draw.rect(state.window, L_GRAY, line)
+
+        pygame.display.update(lines)
+        drawing.p_lines = lines
+
         if drawing.start and pygame.mouse.get_pressed(3)[0]:
             prev = drawing.prev
-            p_line = drawing.p_line
 
             state.window.blit(state.background.image, prev, area=prev.move(*state.resolution))
-            state.window.blit(state.background.image, p_line, area=p_line.move(*state.resolution))
-            pygame.display.update([prev, p_line])
+
+            pygame.display.update([prev])
 
             road = logic.create_road(drawing.start, state.coordinates)
 
@@ -207,25 +214,11 @@ def draw(event: pygame.event.Event):
 
             road.rect = road.rect.move(-ox, -oy)
 
-            if road.rect.height != CELL_SIZE:
-                height = road.rect.top
-                if height < y - y % 10:
-                    height += road.rect.height
-                line = pygame.Rect(state.menu.width, height, w - state.menu.width, 1)
-            elif road.rect.width != CELL_SIZE:
-                width = road.rect.left
-                if width < x - x % 10:
-                    width += road.rect.width
-                line = pygame.Rect(width, 0, 1, h)
-            else:
-                line = pygame.Rect(0, 0, 0, 0)
-
             pygame.draw.rect(state.window, color, road.rect)
-            pygame.draw.rect(state.window, color, line)
-            pygame.display.update([road.rect, line])
+
+            pygame.display.update([road.rect])
 
             drawing.prev = road.rect
-            drawing.p_line = line
 
     try:
         locals()[EVENT_NAMES[event.type]]()
@@ -285,29 +278,6 @@ def select(event: pygame.event.Event):
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
-        for s_road in state.selected_roads:
-            if s_road.rect.collidepoint(x, y):
-                for road in state.selected_roads:
-                    pygame.draw.rect(state.window, YELLOW, road.rect.move(-ox, -oy))
-                    pygame.display.update(road.rect.move(-ox, -oy))
-                return
-
-        for s_road in state.selected_roads:
-            state.window.blit(state.background.image, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
-            pygame.display.update(s_road.rect.move(-ox, -oy))
-
-        if state.selecting.prev.collidepoint(x, y):
-            pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
-            pygame.display.update(state.selecting.prev)
-            return
-
-        prev_rect = state.selecting.prev
-
-        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
-        pygame.display.update(prev_rect)
-
-        state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
-
         for v_road in state.visible_roads:
             if v_road.rect.collidepoint(x + ox, y + oy):
                 pygame.draw.rect(state.window, WHITE, v_road.rect.move(-ox, -oy), 1)
@@ -337,6 +307,31 @@ def select(event: pygame.event.Event):
                 state.selecting.prev = v_road.rect.move(-ox, -oy)
 
                 break
+
+        for s_road in state.selected_roads:
+            if s_road.rect.collidepoint(x, y):
+                for road in state.selected_roads:
+                    pygame.draw.rect(state.window, YELLOW, road.rect.move(-ox, -oy))
+                    pygame.display.update(road.rect.move(-ox, -oy))
+                return
+
+        for s_road in state.selected_roads:
+            state.window.blit(state.background.image, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
+            pygame.display.update(s_road.rect.move(-ox, -oy))
+
+        if state.selecting.prev.collidepoint(x, y):
+            pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
+            pygame.display.update(state.selecting.prev)
+            return
+
+        prev_rect = state.selecting.prev
+
+        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
+        pygame.display.update(prev_rect)
+
+        state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
+
+
 
     try:
         locals()[EVENT_NAMES[event.type]]()
