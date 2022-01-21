@@ -311,6 +311,15 @@ def select(event: pygame.event.Event):
                 ex, ey = v_road.end
                 ex = ex * CELL_SIZE - ox
                 ey = ey * CELL_SIZE - oy
+
+                if ex < sx:
+                    ex -= CELL_SIZE // 2
+                    sx += CELL_SIZE // 2
+
+                if ey < sy:
+                    ey -= CELL_SIZE // 2
+                    sy += CELL_SIZE // 2
+
                 if v_road.rect.h == CELL_SIZE:
                     pygame.draw.rect(state.window, GREEN, (sx, sy, CELL_SIZE // 2, CELL_SIZE))
                     pygame.draw.rect(state.window, RED, (ex + CELL_SIZE // 2, ey, CELL_SIZE // 2, CELL_SIZE))
