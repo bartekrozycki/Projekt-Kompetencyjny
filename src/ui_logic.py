@@ -106,7 +106,7 @@ def menu(event: pygame.event.Event):
 def draw(event: pygame.event.Event):
     def mouse_button_up():
         def button_left():
-            x, y = state.offset
+            offset_x, offset_y = state.offset
             w, h = state.resolution
 
             road = logic.create_road(drawing.start, state.coordinates)
@@ -114,19 +114,35 @@ def draw(event: pygame.event.Event):
             # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
-                    state.window.blit(state.background.image, road.rect.move(-x, -y), road.rect.move(w - x, h - y))
-                    pygame.display.update(road.rect.move(-x, -y))
+                    state.window.blit(state.background.image, road.rect.move(-offset_x, -offset_y),
+                                      road.rect.move(w - offset_x, h - offset_y))
+                    pygame.display.update(road.rect.move(-offset_x, -offset_y))
                     drawing.prev = pygame.Rect(0, 0, 0, 0)
                     drawing.start = None
                     return
+
+            print("==========")
+            inflated_horizontal = road.rect.inflate(CELL_SIZE, 0)
+            inflated_vertical = road.rect.inflate(0, CELL_SIZE)
+
+            for v_road in state.visible_roads:
+                if road.rect.h == CELL_SIZE and v_road.rect.h == CELL_SIZE:
+                    if inflated_horizontal.colliderect(v_road.rect):
+                        # _
+                        pass
+                if road.rect.w == CELL_SIZE and v_road.rect.w == CELL_SIZE:
+                    if inflated_vertical.colliderect(v_road.rect):
+                        # |
+                        pass
+
 
             state.roads.append(road)
             state.visible_roads.append(road)
 
             # draw road with actual map position offset and update this part of screen
-            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - x, h - y))
-            pygame.draw.rect(state.window, BLACK, road.rect.move(- x, - y))
-            pygame.display.update(road.rect.move(- x, - y))
+            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - offset_x, h - offset_y))
+            pygame.draw.rect(state.window, BLACK, road.rect.move(-offset_x, -offset_y))
+            pygame.display.update(road.rect.move(-offset_x, -offset_y))
 
             # clear variables used in process
             drawing.prev = pygame.Rect(0, 0, 0, 0)
