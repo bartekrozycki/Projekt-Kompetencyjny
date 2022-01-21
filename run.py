@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import pygame
 
 from src import state, logic, constants
-from src.state import drawing, selecting
+from src.state import draw_mode, select_mode
 from src.ui_logic import menu, draw, window, select
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     res_w, res_h = state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
     state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
 
-    state.background = logic.recreate_background()
+    state.background = logic.create_background()
 
     pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
     state.window.blit(state.background.image, (state.menu.width, 0),
@@ -58,9 +58,9 @@ if __name__ == '__main__':
 
             if pygame.mouse.get_pos()[0] <= state.menu.width:
                 menu(event)
-            elif drawing.on:
+            elif draw_mode.on:
                 draw(event)
-            elif selecting.on:
+            elif select_mode.on:
                 select(event)
 
         state.clock.tick(300)

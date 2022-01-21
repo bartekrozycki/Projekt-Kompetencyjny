@@ -1,8 +1,6 @@
-import pygame
-
 from src import state, logic
-from src.constants import CELL_SIZE, EVENT_NAMES, MENU_W, BUTTON_NAMES, BLACK, WHITE, GREEN, RED, YELLOW, D_GRAY, L_GRAY
-from src.state import drawing
+from src.constants import *
+from src.state import draw_mode
 
 
 def window(event: pygame.event.Event):
@@ -45,12 +43,12 @@ def window(event: pygame.event.Event):
 
     def video_resize():
         state.resolution = event.size
-        state.background = logic.recreate_background()  # create background
+        state.background = logic.create_background()  # create background
 
         res_w, res_h = state.resolution
         state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
 
-        state.bg_menu = logic.recreate_menu()
+        state.bg_menu = logic.create_menu()
 
         pygame.display.update()
 
@@ -60,7 +58,7 @@ def window(event: pygame.event.Event):
             state.offset_change = [x - x % CELL_SIZE, y - y % CELL_SIZE]
             state.offset = [state.offset[i] + state.offset_change[i] for i in range(2)]
             state.offset_change = [0, 0]
-            state.background = logic.recreate_background()
+            state.background = logic.create_background()
             w, h = state.resolution
             state.window.blit(state.background.image, (MENU_W, 0), (w + MENU_W, h, w - MENU_W, h))
             pygame.display.update((MENU_W, 0, w - MENU_W, h))
@@ -78,24 +76,16 @@ def window(event: pygame.event.Event):
 def menu(event: pygame.event.Event):
     # click menu button
     def mouse_button_down():
-        pos = state.mouse_pos
-        for i, button in enumerate(state.buttons):
-            rect = pygame.rect.Rect(CELL_SIZE / 2, CELL_SIZE / 2 + i * 30, state.menu.width - 10, 20)
-            if rect.collidepoint(*pos):
-                clicked_button = button
+        x, y = state.mouse_pos
+        if not (BUTTON_GAP_V < x < MENU_W - BUTTON_GAP_V):
+            return
+        if not (BUTTON_GAP_H < y % (BUTTON_GAP_H + BUTTON_H)):
+            return
 
-                clicked_button.use()
-
-                if state.highlighted_button_index != -1 and clicked_button.activable:
-                    logic.render_button(state.highlighted_button_index)
-                    state.highlighted_button_index = i
-
-                if clicked_button.activable:
-                    logic.render_button(i, GREEN)
-
-                pygame.display.update()
-
-                break
+        try:
+            logic.press_button(state.button_names[y // (BUTTON_H + BUTTON_GAP_H)])
+        except IndexError:
+            pass
 
     try:
         locals()[EVENT_NAMES[event.type]]()
@@ -111,15 +101,15 @@ def draw(event: pygame.event.Event):
 
     def mouse_button_up():
         def button_left():
-            road = logic.create_road(drawing.start, state.coordinates)
+            road = logic.create_road(draw_mode.start, state.coordinates)
 
             # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
                     state.window.blit(state.background.image, road.rect.move(-ox, -oy), road.rect.move(w - ox, h - oy))
                     pygame.display.update(road.rect.move(-ox, -oy))
-                    drawing.prev = pygame.Rect(0, 0, 0, 0)
-                    drawing.start = None
+                    draw_mode.prev = pygame.Rect(0, 0, 0, 0)
+                    draw_mode.start = None
                     return
 
             inflated_h = road.rect.inflate(CELL_SIZE, 0)
@@ -168,15 +158,15 @@ def draw(event: pygame.event.Event):
             pygame.display.update(road.rect.move(- ox, - oy))
 
             # clear variables used in process
-            drawing.prev = pygame.Rect(0, 0, 0, 0)
-            drawing.p_line = pygame.Rect(0, 0, 0, 0)
-            drawing.start = None
+            draw_mode.prev = pygame.Rect(0, 0, 0, 0)
+            draw_mode.p_line = pygame.Rect(0, 0, 0, 0)
+            draw_mode.start = None
 
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_button_down():
         def button_left():
-            x, y = drawing.start = state.coordinates
+            x, y = draw_mode.start = state.coordinates
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(state.window, WHITE, rect)
             pygame.display.update(rect)
@@ -184,9 +174,9 @@ def draw(event: pygame.event.Event):
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
-        for line in drawing.p_lines:
+        for line in draw_mode.p_lines:
             state.window.blit(state.background.image, line, area=line.move(*state.resolution))
-        pygame.display.update(drawing.p_lines)
+        pygame.display.update(draw_mode.p_lines)
 
         lines = []
         lines.append(pygame.Rect(state.menu.width, cy * CELL_SIZE, w - state.menu.width, 1))
@@ -198,16 +188,16 @@ def draw(event: pygame.event.Event):
             pygame.draw.rect(state.window, L_GRAY, line)
 
         pygame.display.update(lines)
-        drawing.p_lines = lines
+        draw_mode.p_lines = lines
 
-        if drawing.start and pygame.mouse.get_pressed(3)[0]:
-            prev = drawing.prev
+        if draw_mode.start and pygame.mouse.get_pressed(3)[0]:
+            prev = draw_mode.prev
 
             state.window.blit(state.background.image, prev, area=prev.move(*state.resolution))
 
             pygame.display.update([prev])
 
-            road = logic.create_road(drawing.start, state.coordinates)
+            road = logic.create_road(draw_mode.start, state.coordinates)
 
             color = WHITE
             for v_road in state.visible_roads:
@@ -221,7 +211,7 @@ def draw(event: pygame.event.Event):
 
             pygame.display.update([road.rect])
 
-            drawing.prev = road.rect
+            draw_mode.prev = road.rect
 
     try:
         locals()[EVENT_NAMES[event.type]]()
@@ -275,13 +265,13 @@ def select(event: pygame.event.Event):
                     pygame.display.update(v_road.rect.move(-ox, -oy))
                     state.roads.remove(v_road)
                     state.visible_roads.remove(v_road)
-                    state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
+                    state.select_mode.prev = pygame.rect.Rect(0, 0, 0, 0)
                     return
 
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
-        prev_rect = state.selecting.prev
+        prev_rect = state.select_mode.prev
 
         state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
         pygame.display.update(prev_rect)
@@ -312,7 +302,7 @@ def select(event: pygame.event.Event):
                     pygame.draw.rect(state.window, RED, (ex, ey + CELL_SIZE // 2, CELL_SIZE, CELL_SIZE // 2))
 
                 pygame.display.update(v_road.rect.move(-ox, -oy))
-                state.selecting.prev = v_road.rect.move(-ox, -oy)
+                state.select_mode.prev = v_road.rect.move(-ox, -oy)
 
                 break
 
@@ -327,12 +317,12 @@ def select(event: pygame.event.Event):
             state.window.blit(state.background.image, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
             pygame.display.update(s_road.rect.move(-ox, -oy))
 
-        if state.selecting.prev.collidepoint(x, y):
-            pygame.draw.rect(state.window, WHITE, state.selecting.prev, 1)
-            pygame.display.update(state.selecting.prev)
+        if state.select_mode.prev.collidepoint(x, y):
+            pygame.draw.rect(state.window, WHITE, state.select_mode.prev, 1)
+            pygame.display.update(state.select_mode.prev)
             return
 
-        state.selecting.prev = pygame.rect.Rect(0, 0, 0, 0)
+        state.select_mode.prev = pygame.rect.Rect(0, 0, 0, 0)
 
 
 

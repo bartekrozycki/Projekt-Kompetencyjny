@@ -12,6 +12,9 @@ L_GRAY = (140, 140, 160)
 
 MENU_W = 100
 CELL_SIZE = 10
+BUTTON_H = 20
+BUTTON_GAP_H = 10
+BUTTON_GAP_V = 5
 
 EVENT_NAMES = {
     pygame.MOUSEBUTTONUP: "mouse_button_up",

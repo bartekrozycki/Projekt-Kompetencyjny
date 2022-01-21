@@ -4,11 +4,11 @@ from types import SimpleNamespace
 import pygame
 
 from src import constants, state
-from src.constants import CELL_SIZE, BLACK, YELLOW
-from src.state import drawing, modes, selecting
+from src.constants import *
+from src.state import draw_mode, modes, select_mode
 
 
-def recreate_background():
+def create_background():
     w, h = state.resolution
     x, y = state.offset
 
@@ -39,7 +39,7 @@ def background_display_rectangle(x, y):
     return pygame.rect.Rect(res_w + x, res_h + y, res_w - state.menu.width, res_h)
 
 
-def recreate_menu():
+def create_menu():
     res_w, res_h = state.resolution
 
     menu = pygame.sprite.Sprite()
@@ -53,36 +53,96 @@ def recreate_menu():
     return menu
 
 
+def press_button(name):
+    if name == state.select_mode:
+        return
+
+    def select():
+        mode_destructor()
+        draw_button(name, GREEN)
+        select_mode.on = True
+        state.selected_mode = 'select'
+
+    def draw():
+        mode_destructor()
+        draw_button(name, GREEN)
+        draw_mode.on = True
+        state.selected_mode = 'draw'
+
+    def clear():
+        erase_all_roads()
+
+    locals()[name]()
+
+
+def mode_destructor():
+    def select():
+        select_mode.on = False
+
+    def draw():
+        draw_mode.on = False
+        for line in state.draw_mode.p_lines:
+            state.window.blit(state.background.image, line, area=line.move(*state.resolution))
+        pygame.display.update(draw_mode.p_lines)
+
+    draw_button(state.selected_mode, WHITE)
+    locals()[state.selected_mode]()
+
+
+def erase_all_roads():
+    state.roads = []
+    state.background = create_background()
+    res_w, res_h = state.resolution
+    state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
+    pygame.display.update()
+
+
 def button_select():
     for mode in modes:
         mode.on = False
-    selecting.on = True
+    select_mode.on = True
 
-    for line in state.drawing.p_lines:
+    for line in state.draw_mode.p_lines:
         state.window.blit(state.background.image, line, area=line.move(*state.resolution))
-    pygame.display.update(drawing.p_lines)
+    pygame.display.update(draw_mode.p_lines)
 
 
 def button_draw():
     for mode in modes:
         mode.on = False
-    drawing.on = True
+    draw_mode.on = True
 
 
 def render_button(index, color=constants.WHITE):
     button = state.buttons[index]
-    rect = pygame.rect.Rect(5, 5 + index * 30, state.menu.width - 10, 20)
+    rect = pygame.rect.Rect(BUTTON_GAP_V, 10 + index * 30, state.menu.width - 10, 20)
     text_render = state.font_consolas.render(button.text, False, constants.BLACK)
     pygame.draw.rect(state.window, color, rect),
     pygame.Surface.blit(state.window, text_render, rect.move(rect.w // 2 - text_render.get_rect().w // 2, 3))
 
 
-def render_buttons():
-    for i in range(len(state.buttons)):
-        render_button(i)
+def draw_button(name, color):
+    i = state.button_names.index(name)
+    rect = pygame.Rect(BUTTON_GAP_V, BUTTON_GAP_H + i * (BUTTON_GAP_H + BUTTON_H), MENU_W - 2 * BUTTON_GAP_V, BUTTON_H)
+    text_render = state.font_consolas.render(name, False, constants.BLACK)
+    pygame.draw.rect(state.window, color, rect),
+    pygame.Surface.blit(state.window, text_render, rect.move(rect.w // 2 - text_render.get_rect().w // 2, 3))
+    pygame.display.update(rect)
 
-    if state.highlighted_button_index < len(state.buttons):
-        render_button(state.highlighted_button_index, constants.GREEN)
+
+def render_buttons():
+    # for i in range(len(state.buttons)):
+    #     render_button(i)
+    #
+    # if state.highlighted_button_index < len(state.buttons):
+    #     render_button(state.highlighted_button_index, constants.GREEN)
+    for name in state.button_names:
+        try:
+            draw_button(name, GREEN if state.modes_on[name] else WHITE)
+        except:
+            draw_button(name, WHITE)
+
+
 
 def create_road(start, end):
     x1, y1 = start
@@ -107,18 +167,16 @@ def create_road(start, end):
     start = [start[0] + ox // CELL_SIZE, start[1] + oy // CELL_SIZE]
     end = [end[0] + ox // CELL_SIZE, end[1] + oy // CELL_SIZE]
 
-
     return SimpleNamespace(rect=rect.move(ox, oy), connections=[], start=start, end=end)
 
 
 def button_clear_workspace():
-    import pickle
     state.roads = []
     # update workspace
-    state.background = recreate_background()  # create background
+    state.background = create_background()  # create background
     res_w, res_h = state.resolution
     state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
-    state.bg_menu = recreate_menu()
+    state.bg_menu = create_menu()
     pygame.display.update()
     ###
     roads_file = open(constants.ROADS_FILENAME, 'wb')

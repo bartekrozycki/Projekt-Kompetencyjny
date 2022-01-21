@@ -19,11 +19,18 @@ selected_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[]
 
 clock = pygame.time.Clock()
 
-selecting = SimpleNamespace(on=True, prev=pygame.Rect(0, 0, 0, 0))
-drawing = SimpleNamespace(on=False, start=None, prev=pygame.Rect(0, 0, 0, 0), p_lines=[])
+select_mode = SimpleNamespace(on=True, prev=pygame.Rect(0, 0, 0, 0))
+draw_mode = SimpleNamespace(on=False, start=None, prev=pygame.Rect(0, 0, 0, 0), p_lines=[])
 moving = SimpleNamespace(on=False)
 
-modes = [drawing, selecting]
+modes = [select_mode, draw_mode]
+modes_on = {
+    'select': True,
+    'draw': False
+}
+selected_mode = 'select'
+button_names = ['select', 'draw', 'clear']
+
 
 mouse_pos = [0, 0]
 coordinates = [0, 0]
