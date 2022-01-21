@@ -91,17 +91,16 @@ def create_road(start, end):
     if diff_x > diff_y:
         rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE * (diff_x + 1),
                            CELL_SIZE)
+        end[1] = start[1]
         if x1 > x2:
             rect = rect.move(-diff_x * CELL_SIZE, 0)
     else:
         rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE, CELL_SIZE * (diff_y + 1))
+        end[0] = start[0]
         if y1 > y2:
             rect = rect.move(0, -diff_y * CELL_SIZE)
 
     x, y = state.offset
-
-    start = [rect.x // CELL_SIZE, rect.y // CELL_SIZE]
-    end = [(rect.x + rect.w - CELL_SIZE) // CELL_SIZE, (rect.y + rect.h - CELL_SIZE) // CELL_SIZE]
 
     return SimpleNamespace(rect=rect.move(x - x % 10, y - y % 10), connections=[], start=start, end=end)
 
