@@ -4,9 +4,6 @@ import pygame
 
 menu = SimpleNamespace(width=100)
 
-buttons: list[SimpleNamespace(use=None, text='default', activable=False)] = []
-highlighted_button_index = 0
-
 resolution = None
 window = None
 
@@ -19,12 +16,11 @@ selected_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[]
 
 clock = pygame.time.Clock()
 
-select_mode = SimpleNamespace(on=True, prev=pygame.Rect(0, 0, 0, 0))
-draw_mode = SimpleNamespace(on=False, start=None, prev=pygame.Rect(0, 0, 0, 0), p_lines=[])
+select_mode = SimpleNamespace(prev=pygame.Rect(0, 0, 0, 0))
+draw_mode = SimpleNamespace(start=None, prev=pygame.Rect(0, 0, 0, 0), p_lines=[])
 moving = SimpleNamespace(on=False)
 
-modes = [select_mode, draw_mode]
-modes_on = {
+modes = {
     'select': True,
     'draw': False
 }
