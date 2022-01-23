@@ -1,6 +1,5 @@
 from src import state, logic
 from src.constants import *
-from src.state import draw_mode
 
 
 def window(event: pygame.event.Event):
@@ -8,23 +7,8 @@ def window(event: pygame.event.Event):
     def mouse_motion():
         prev_pos = state.mouse_pos
         pos = event.pos
-        prev_coor = state.coordinates
         coor = [c // CELL_SIZE for c in pos]
-        prev_rect = state.cursor.prev
 
-        # clear previous cursor
-        if pos[0] <= state.menu.width or coor != prev_coor:
-            if prev_rect:
-                state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
-                pygame.display.update(prev_rect)
-                state.cursor.prev = None
-        # draw cursor
-        if pos[0] > state.menu.width and coor != prev_coor and not state.moving.on:
-            cursor_rect = pygame.Rect(pos[0] - pos[0] % 10, pos[1] - pos[1] % 10, CELL_SIZE, CELL_SIZE)
-
-            pygame.draw.rect(state.window, L_GRAY, cursor_rect, 1)
-            pygame.display.update(cursor_rect)
-            state.cursor.prev = cursor_rect
         # move and display
         if pos[0] > state.menu.width and pygame.mouse.get_pressed(3)[1]:
             state.offset_change = [(state.offset_change[i] + prev_pos[i] - pos[i]) for i in range(2)]
@@ -101,15 +85,15 @@ def draw(event: pygame.event.Event):
 
     def mouse_button_up():
         def button_left():
-            road = logic.create_road(draw_mode.start, state.coordinates)
+            road = logic.create_road(state.draw_mode.start, state.coordinates)
 
             # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
                     state.window.blit(state.background.image, road.rect.move(-ox, -oy), road.rect.move(w - ox, h - oy))
                     pygame.display.update(road.rect.move(-ox, -oy))
-                    draw_mode.prev = pygame.Rect(0, 0, 0, 0)
-                    draw_mode.start = None
+                    state.draw_mode.prev = pygame.Rect(0, 0, 0, 0)
+                    state.draw_mode.start = None
                     return
 
             inflated_h = road.rect.inflate(CELL_SIZE, 0)
@@ -158,15 +142,15 @@ def draw(event: pygame.event.Event):
             pygame.display.update(road.rect.move(- ox, - oy))
 
             # clear variables used in process
-            draw_mode.prev = pygame.Rect(0, 0, 0, 0)
-            draw_mode.p_line = pygame.Rect(0, 0, 0, 0)
-            draw_mode.start = None
+            state.draw_mode.prev = pygame.Rect(0, 0, 0, 0)
+            state.draw_mode.p_line = pygame.Rect(0, 0, 0, 0)
+            state.draw_mode.start = None
 
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_button_down():
         def button_left():
-            x, y = draw_mode.start = state.coordinates
+            x, y = state.draw_mode.start = state.coordinates
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(state.window, WHITE, rect)
             pygame.display.update(rect)
@@ -174,9 +158,9 @@ def draw(event: pygame.event.Event):
         locals()[BUTTON_NAMES[event.button]]()
 
     def mouse_motion():
-        for line in draw_mode.p_lines:
+        for line in state.draw_mode.p_lines:
             state.window.blit(state.background.image, line, area=line.move(*state.resolution))
-        pygame.display.update(draw_mode.p_lines)
+        pygame.display.update(state.draw_mode.p_lines)
 
         lines = []
         lines.append(pygame.Rect(state.menu.width, cy * CELL_SIZE, w - state.menu.width, 1))
@@ -188,16 +172,16 @@ def draw(event: pygame.event.Event):
             pygame.draw.rect(state.window, L_GRAY, line)
 
         pygame.display.update(lines)
-        draw_mode.p_lines = lines
+        state.draw_mode.p_lines = lines
 
-        if draw_mode.start and pygame.mouse.get_pressed(3)[0]:
-            prev = draw_mode.prev
+        if state.draw_mode.start and pygame.mouse.get_pressed(3)[0]:
+            prev = state.draw_mode.prev
 
             state.window.blit(state.background.image, prev, area=prev.move(*state.resolution))
 
             pygame.display.update([prev])
 
-            road = logic.create_road(draw_mode.start, state.coordinates)
+            road = logic.create_road(state.draw_mode.start, state.coordinates)
 
             color = WHITE
             for v_road in state.visible_roads:
@@ -211,7 +195,7 @@ def draw(event: pygame.event.Event):
 
             pygame.display.update([road.rect])
 
-            draw_mode.prev = road.rect
+            state.draw_mode.prev = road.rect
 
     try:
         locals()[EVENT_NAMES[event.type]]()

@@ -3,7 +3,6 @@ from types import SimpleNamespace
 
 from src import constants, state
 from src.constants import *
-from src.state import draw_mode, modes, select_mode
 
 
 def create_background():
@@ -73,7 +72,6 @@ def mode_constructor(name):
         pass
 
     def draw():
-        print(state.modes)
         pass
 
     if name not in state.modes.keys():
@@ -91,7 +89,7 @@ def mode_destructor(name):
     def draw():
         for line in state.draw_mode.p_lines:
             state.window.blit(state.background.image, line, area=line.move(*state.resolution))
-        pygame.display.update(draw_mode.p_lines)
+        pygame.display.update(state.draw_mode.p_lines)
 
     state.modes[name] = False
     draw_button(name, WHITE)
@@ -117,10 +115,8 @@ def draw_button(name, color):
 
 def draw_buttons():
     for name in state.button_names:
-        try:
-            draw_button(name, GREEN if state.modes[name] else WHITE)
-        except:
-            draw_button(name, WHITE)
+        draw_button(name, WHITE)
+    draw_button(state.selected_mode, GREEN)
 
 
 def create_road(start, end):

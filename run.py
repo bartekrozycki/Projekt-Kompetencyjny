@@ -44,6 +44,9 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key in button_shortcuts.keys():
                     logic.press_button(button_shortcuts[event.key])
+                elif event.key == pygame.K_q:
+                    running = False
+                    break
 
             window(event)
 
