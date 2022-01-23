@@ -9,8 +9,8 @@ menu = SimpleNamespace(width=100)
 resolution = None
 window = None
 
-background: pygame.sprite.Sprite
-bg_menu: pygame.sprite.Sprite
+# background: pygame.sprite.Sprite
+background: pygame.Surface
 
 roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
 visible_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []

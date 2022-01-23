@@ -9,45 +9,25 @@ def create_background():
     w, h = state.resolution
     x, y = state.offset
 
-    background = pygame.sprite.Sprite()
-    background.rect = pygame.Rect(-w, -h, w * 3, h * 3)
-    background.image = pygame.Surface(background.rect.size)
-
-    background.image.fill(constants.D_GRAY)
+    background = pygame.Surface((3 * w, 3 * h))
+    background.fill(constants.D_GRAY)
 
     state.visible_roads = []
+    b_rect = pygame.Rect(-w, -h, 3 * w, 3 * h)
 
-    background_pos = background.rect.move(x, y)
+    for index in b_rect.collidelistall(state.roads):
+        state.visible_roads.append(state.roads[index])
+        pygame.draw.rect(background, BLACK, state.roads[index].rect.move(w - x, h - y))
 
-    for road in state.roads:
-        if road.rect.colliderect(background_pos):
-            state.visible_roads.append(road)
-            pygame.draw.rect(background.image, BLACK, road.rect.move(w - x, h - y))
-
-    for s_road in state.selected_roads:
-        if s_road.rect.colliderect(background_pos):
-            pygame.draw.rect(background.image, YELLOW, s_road.rect.move(w - x, h - y), 1)
+    for index in b_rect.collidelistall(state.selected_roads):
+        pygame.draw.rect(background, YELLOW, state.selected_roads[index].rect.move(w - x, h - y), 1)
 
     return background
 
 
-def background_display_rectangle(x, y):
-    res_w, res_h = state.resolution
-    return pygame.rect.Rect(res_w + x, res_h + y, res_w - state.menu.width, res_h)
-
-
-def create_menu():
-    res_w, res_h = state.resolution
-
-    menu = pygame.sprite.Sprite()
-    menu.rect = pygame.Rect(0, 0, state.menu.width, res_h)
-    menu.image = pygame.Surface(menu.rect.size)
-
-    menu.image.fill(constants.BLACK)
-
-    draw_buttons()
-
-    return menu
+def bg_visible_area():
+    w, h = state.resolution
+    return pygame.Rect(w + state.menu.width, h, w - state.menu.width, h)
 
 
 def press_button(name):
@@ -88,7 +68,7 @@ def mode_destructor(name):
 
     def draw():
         for line in state.draw_mode.p_lines:
-            state.window.blit(state.background.image, line, area=line.move(*state.resolution))
+            state.window.blit(state.background, line, area=line.move(*state.resolution))
         pygame.display.update(state.draw_mode.p_lines)
 
     state.modes[name] = False
@@ -99,8 +79,7 @@ def mode_destructor(name):
 def erase_all_roads():
     state.roads = []
     state.background = create_background()
-    res_w, res_h = state.resolution
-    state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
+    state.window.blit(state.background, (state.menu.width, 0), bg_visible_area())
     pygame.display.update()
 
 
@@ -139,8 +118,9 @@ def create_road(start, end):
             rect = rect.move(0, -diff_y * CELL_SIZE)
 
     ox, oy = state.offset
-    start = [start[0] + ox // CELL_SIZE, start[1] + oy // CELL_SIZE]
-    end = [end[0] + ox // CELL_SIZE, end[1] + oy // CELL_SIZE]
+    offset = [o // CELL_SIZE for o in state.offset]
+    start = [start[i] + offset[i] for i in range(2)]
+    end = [end[i] + offset[i] for i in range(2)]
 
     return SimpleNamespace(rect=rect.move(ox, oy), connections=[], start=start, end=end)
 

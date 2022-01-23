@@ -16,7 +16,7 @@ def window(event: pygame.event.Event):
             x = x - x % CELL_SIZE
             y = y - y % CELL_SIZE
             w, h = state.resolution
-            state.window.blit(state.background.image, (MENU_W, 0), area=(w + MENU_W + x, h + y, w - MENU_W, h))
+            state.window.blit(state.background, (MENU_W, 0), area=(w + MENU_W + x, h + y, w - MENU_W, h))
 
             pygame.display.update((MENU_W, 0, w - MENU_W, h))
 
@@ -30,9 +30,7 @@ def window(event: pygame.event.Event):
         state.background = logic.create_background()  # create background
 
         res_w, res_h = state.resolution
-        state.window.blit(state.background.image, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
-
-        state.bg_menu = logic.create_menu()
+        state.window.blit(state.background, (100, 0), area=(res_w + 100, res_h, res_w - 100, res_h))
 
         pygame.display.update()
 
@@ -44,7 +42,7 @@ def window(event: pygame.event.Event):
             state.offset_change = [0, 0]
             state.background = logic.create_background()
             w, h = state.resolution
-            state.window.blit(state.background.image, (MENU_W, 0), (w + MENU_W, h, w - MENU_W, h))
+            state.window.blit(state.background, (MENU_W, 0), (w + MENU_W, h, w - MENU_W, h))
             pygame.display.update((MENU_W, 0, w - MENU_W, h))
 
             state.moving.on = False
@@ -90,7 +88,7 @@ def draw(event: pygame.event.Event):
             # check if new road collide with existing visible roads and remove it
             for v_road in state.visible_roads:
                 if road.rect.colliderect(v_road.rect):
-                    state.window.blit(state.background.image, road.rect.move(-ox, -oy), road.rect.move(w - ox, h - oy))
+                    state.window.blit(state.background, road.rect.move(-ox, -oy), road.rect.move(w - ox, h - oy))
                     pygame.display.update(road.rect.move(-ox, -oy))
                     state.draw_mode.prev = pygame.Rect(0, 0, 0, 0)
                     state.draw_mode.start = None
@@ -137,7 +135,7 @@ def draw(event: pygame.event.Event):
             state.visible_roads.append(road)
 
             # draw road with actual map position offset and update this part of screen
-            pygame.draw.rect(state.background.image, BLACK, road.rect.move(w - ox, h - oy))
+            pygame.draw.rect(state.background, BLACK, road.rect.move(w - ox, h - oy))
             pygame.draw.rect(state.window, BLACK, road.rect.move(- ox, - oy))
             pygame.display.update(road.rect.move(- ox, - oy))
 
@@ -159,7 +157,7 @@ def draw(event: pygame.event.Event):
 
     def mouse_motion():
         for line in state.draw_mode.p_lines:
-            state.window.blit(state.background.image, line, area=line.move(*state.resolution))
+            state.window.blit(state.background, line, area=line.move(*state.resolution))
         pygame.display.update(state.draw_mode.p_lines)
 
         lines = []
@@ -177,7 +175,7 @@ def draw(event: pygame.event.Event):
         if state.draw_mode.start and pygame.mouse.get_pressed(3)[0]:
             prev = state.draw_mode.prev
 
-            state.window.blit(state.background.image, prev, area=prev.move(*state.resolution))
+            state.window.blit(state.background, prev, area=prev.move(*state.resolution))
 
             pygame.display.update([prev])
 
@@ -216,7 +214,7 @@ def select(event: pygame.event.Event):
                     for s_road in state.selected_roads:
                         pygame.draw.rect(state.window, YELLOW, s_road.rect.move(-ox, -oy))
                         pygame.display.update(s_road.rect.move(-ox, -oy))
-                    pygame.draw.rect(state.background.image, YELLOW, v_road.rect.move(w - ox, h - oy), 1)
+                    pygame.draw.rect(state.background, YELLOW, v_road.rect.move(w - ox, h - oy), 1)
                     pygame.display.update(v_road.rect.move(-ox, -oy))
 
                     state.selected_roads.append(v_road)
@@ -224,7 +222,7 @@ def select(event: pygame.event.Event):
 
             for s_road in state.selected_roads:
                 pygame.draw.rect(state.window, BLACK, s_road.rect.move(-ox, -oy))
-                pygame.draw.rect(state.background.image, BLACK, s_road.rect.move(w - ox, h - oy))
+                pygame.draw.rect(state.background, BLACK, s_road.rect.move(w - ox, h - oy))
                 pygame.display.update(s_road.rect.move(-ox, -oy))
 
             state.selected_roads = []
@@ -234,7 +232,7 @@ def select(event: pygame.event.Event):
                 if s_road.rect.move(-ox, -oy).collidepoint(x, y):
                     for road in state.selected_roads:
                         pygame.draw.rect(state.window, D_GRAY, road.rect.move(-ox, -oy))
-                        pygame.draw.rect(state.background.image, D_GRAY, road.rect.move(w - ox, h - oy))
+                        pygame.draw.rect(state.background, D_GRAY, road.rect.move(w - ox, h - oy))
                         pygame.display.update(road.rect.move(-ox, -oy))
                         state.roads.remove(road)
                         state.visible_roads.remove(road)
@@ -245,7 +243,7 @@ def select(event: pygame.event.Event):
             for v_road in state.visible_roads:
                 if v_road.rect.move(-ox, -oy).collidepoint(x, y):
                     pygame.draw.rect(state.window, D_GRAY, v_road.rect.move(-ox, -oy))
-                    pygame.draw.rect(state.background.image, D_GRAY, v_road.rect.move(w - ox, h - oy))
+                    pygame.draw.rect(state.background, D_GRAY, v_road.rect.move(w - ox, h - oy))
                     pygame.display.update(v_road.rect.move(-ox, -oy))
                     state.roads.remove(v_road)
                     state.visible_roads.remove(v_road)
@@ -257,7 +255,7 @@ def select(event: pygame.event.Event):
     def mouse_motion():
         prev_rect = state.select_mode.prev
 
-        state.window.blit(state.background.image, prev_rect, area=prev_rect.move(*state.resolution))
+        state.window.blit(state.background, prev_rect, area=prev_rect.move(*state.resolution))
         pygame.display.update(prev_rect)
 
         for v_road in state.visible_roads:
@@ -298,7 +296,7 @@ def select(event: pygame.event.Event):
                 return
 
         for s_road in state.selected_roads:
-            state.window.blit(state.background.image, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
+            state.window.blit(state.background, s_road.rect.move(-ox, -oy), area=s_road.rect.move(w - ox, h - oy))
             pygame.display.update(s_road.rect.move(-ox, -oy))
 
         if state.select_mode.prev.collidepoint(x, y):

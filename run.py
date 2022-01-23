@@ -25,9 +25,7 @@ if __name__ == '__main__':
     state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
     state.background = logic.create_background()
 
-    pygame.draw.rect(state.window, constants.BLACK, (0, 0, state.menu.width, state.resolution[1]))
-    state.window.blit(state.background.image, (state.menu.width, 0),
-                      area=logic.background_display_rectangle(state.menu.width, 0))
+    state.window.blit(state.background, (state.menu.width, 0), logic.bg_visible_area())
 
     logic.draw_buttons()
 
