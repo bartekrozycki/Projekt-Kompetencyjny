@@ -1,11 +1,11 @@
 import pygame
 
-from src import state, logic, constants
-from src.ui_logic import menu, draw, window, select
+from src import state, logic, ui_logic
+from src.constants import *
 
 event_handlers = {
-    'select': select,
-    'draw': draw,
+    'select': ui_logic.select,
+    'draw': ui_logic.draw,
 }
 
 button_shortcuts = {
@@ -22,15 +22,15 @@ if __name__ == '__main__':
 
     state.font_consolas = pygame.font.SysFont('Consolas', 15)
     state.resolution = (pygame.display.Info().current_w - 200, pygame.display.Info().current_h - 300)
-    state.window = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
-    state.background = logic.create_background()
+    state.display = pygame.display.set_mode(state.resolution, pygame.RESIZABLE)
+    logic.create_background()
 
-    state.window.blit(state.background, (state.menu.width, 0), logic.bg_visible_area())
+    state.display.blit(state.background, (MENU_W, 0), logic.get_workspace_rect())
 
     logic.draw_buttons()
-
     pygame.display.update()
 
+    clock = pygame.time.Clock()
     running = True
     while running:
         events = pygame.event.get()
@@ -46,17 +46,17 @@ if __name__ == '__main__':
                     running = False
                     break
 
-            window(event)
+            ui_logic.window(event)
 
-            if state.moving.on:
+            if state.window.moving:
                 continue
 
-            if pygame.mouse.get_pos()[0] <= state.menu.width:
-                menu(event)
+            if pygame.mouse.get_pos()[0] <= MENU_W:
+                ui_logic.menu(event)
             else:
                 event_handlers[state.selected_mode](event)
 
-        state.clock.tick(300)
+        clock.tick(3000)
 
     logic.save()
     pygame.quit()

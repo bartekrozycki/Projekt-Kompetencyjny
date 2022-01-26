@@ -1,38 +1,47 @@
 from types import SimpleNamespace
 
 import pygame
+from dataclasses import dataclass
 
-clock = pygame.time.Clock()
 
-menu = SimpleNamespace(width=100)
+@dataclass
+class Road:
+    connections: list[list[int, int]]
+    rect: pygame.Rect
+    start: list[int, int]
+    end: list[int, int]
 
-resolution = None
-window = None
 
-# background: pygame.sprite.Sprite
+@dataclass
+class Window:
+    moving: bool
+    area: pygame.Rect
+
+
+@dataclass
+class Select:
+    hovered: pygame.Rect
+
+
+resolution: tuple[int, int]
+display: pygame.Surface
 background: pygame.Surface
 
-roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
-visible_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
-selected_roads: list[SimpleNamespace(connections=[], rect=None, start=[], end=[])] = []
+roads: list[Road] = []
+visible_roads: list[Road] = []
+selected_roads: list[Road] = []
 
 select_mode = SimpleNamespace(prev=pygame.Rect(0, 0, 0, 0))
 draw_mode = SimpleNamespace(start=None, prev=pygame.Rect(0, 0, 0, 0), p_lines=[])
 moving = SimpleNamespace(on=False)
+window = Window(False, pygame.Rect(0, 0, 0, 0))
+select = Select(pygame.Rect(0, 0, 0, 0))
 
-modes = {
-    'select': True,
-    'draw': False
-}
+modes = {'select', 'draw'}
 selected_mode = 'select'
 button_names = ['select', 'draw', 'clear']
 
-mouse_pos = [0, 0]
 coordinates = [0, 0]
 offset = [0, 0]
-offset_change = [0, 0]
 
 font_consolas = None
-
-cursor = SimpleNamespace(cur=None, prev=None)
-prev_cursor_rect = None
