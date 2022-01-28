@@ -19,10 +19,13 @@ def create_background():
     for road in [state.roads[i] for i in b_rect.collidelistall(state.roads)]:
         state.visible_roads.append(road)
         pygame.draw.rect(state.background, BLACK, road.rect.move(w - ox, h - oy))
+        if state.selected_mode in ['connect', 'draw']:
+            draw_road_start_end_on_bg(road)
 
     for road in [state.selected_roads[i] for i in b_rect.collidelistall(state.selected_roads)]:
         draw_road_on_bg(road, L_GREY, 1)
         draw_road_start_end_on_bg(road)
+
 
 
 def get_workspace_rect():
@@ -44,10 +47,14 @@ def press_button(name):
         mode_destructor(state.selected_mode)
         mode_constructor('draw')
 
+    def connect():
+        mode_destructor(state.selected_mode)
+        mode_constructor('connect')
+
     def clear():
         erase_all_roads()
 
-    if name == state.select_mode:
+    if name == state.selected_mode:
         return
     locals()[name]()
 
@@ -59,10 +66,16 @@ def mode_constructor(name):
     def draw():
         pass
 
+    def connect():
+        pass
+
     if name not in state.modes:
         return
     draw_button(name, GREEN)
     state.selected_mode = name
+    create_background()
+    draw_bg(None)
+    pygame.display.update()
     locals()[state.selected_mode]()
 
 
@@ -75,13 +88,16 @@ def mode_destructor(name):
             state.display.blit(state.background, line, area=line.move(*state.resolution))
         pygame.display.update(state.draw_mode.p_lines)
 
+    def connect():
+        pass
+
     draw_button(name, WHITE)
     locals()[name]()
 
 
 def erase_all_roads():
     state.roads = []
-    state.background = create_background()
+    create_background()
     state.display.blit(state.background, (MENU_W, 0), get_workspace_rect())
     pygame.display.update()
 
@@ -108,6 +124,8 @@ def create_road(start, end):
     diff_x = abs(x2 - x1)
     diff_y = abs(y2 - y1)
 
+    vertical = False
+
     if diff_x > diff_y:
         rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE * (diff_x + 1),
                            CELL_SIZE)
@@ -115,6 +133,7 @@ def create_road(start, end):
         if x1 > x2:
             rect = rect.move(-diff_x * CELL_SIZE, 0)
     else:
+        vertical = True
         rect = pygame.Rect(x1 * CELL_SIZE, y1 * CELL_SIZE, CELL_SIZE, CELL_SIZE * (diff_y + 1))
         end[0] = start[0]
         if y1 > y2:
@@ -125,7 +144,29 @@ def create_road(start, end):
     start = [start[i] + offset[i] for i in range(2)]
     end = [end[i] + offset[i] for i in range(2)]
 
-    return state.Road([], rect.move(ox, oy), start, end)
+    sx, sy = start
+    sx = sx * CELL_SIZE - ox
+    sy = sy * CELL_SIZE - oy
+    ex, ey = end
+    ex = ex * CELL_SIZE - ox
+    ey = ey * CELL_SIZE - oy
+
+    if ex < sx:
+        ex -= CELL_SIZE // 2
+        sx += CELL_SIZE // 2
+
+    if ey < sy:
+        ey -= CELL_SIZE // 2
+        sy += CELL_SIZE // 2
+
+    if rect.h == CELL_SIZE:
+        start_rect = pygame.Rect(sx, sy, CELL_SIZE // 2, CELL_SIZE)
+        end_rect = pygame.Rect(ex + CELL_SIZE // 2, ey, CELL_SIZE // 2, CELL_SIZE)
+    else:
+        start_rect = pygame.Rect(sx, sy, CELL_SIZE, CELL_SIZE // 2)
+        end_rect = pygame.Rect(ex, ey + CELL_SIZE // 2, CELL_SIZE, CELL_SIZE // 2)
+
+    return state.Road([], rect.move(ox, oy), tuple(start), tuple(end), start_rect, end_rect, vertical)
 
 
 def save():
@@ -172,7 +213,9 @@ def get_fitted_road_rect(road: state.Road):
     return rect
 
 
-def draw_bg(rect: pygame.Rect):
+def draw_bg(rect: pygame.Rect = None):
+    if not rect:
+        rect = pygame.Rect(MENU_W, 0, state.resolution[0], state.resolution[1])
     w, h = state.resolution
     state.display.blit(state.background, rect, rect.move(w, h))
 
@@ -200,6 +243,7 @@ def draw_road_start_end(road: state.Road):
     else:
         pygame.draw.rect(state.display, GREEN, (sx, sy, CELL_SIZE, CELL_SIZE // 2))
         pygame.draw.rect(state.display, RED, (ex, ey + CELL_SIZE // 2, CELL_SIZE, CELL_SIZE // 2))
+
 
 def draw_road_start_end_on_bg(road: state.Road):
     w, h = state.resolution

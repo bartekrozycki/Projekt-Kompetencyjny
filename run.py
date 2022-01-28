@@ -6,12 +6,15 @@ from src.constants import *
 event_handlers = {
     'select': ui_logic.select,
     'draw': ui_logic.draw,
+    'connect': ui_logic.connect
 }
 
 button_shortcuts = {
     pygame.K_s: 'select',
     pygame.K_d: 'draw',
-    pygame.K_c: 'clear'
+    pygame.K_c: 'connect',
+    pygame.K_BACKSPACE: 'clear'
+
 }
 
 if __name__ == '__main__':
